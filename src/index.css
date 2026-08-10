@@ -1,0 +1,217 @@
+@import 'tailwindcss';
+
+/* ───────────────────────────────────────────────
+   VAULT design tokens
+   Deep navy · soft off-white · restrained green
+   Sophisticated indigo accent · amber · red
+──────────────────────────────────────────────── */
+@theme {
+  --font-sans: 'Inter', ui-sans-serif, system-ui, -apple-system, sans-serif;
+  --font-display: 'Space Grotesk', 'Inter', ui-sans-serif, system-ui, sans-serif;
+
+  /* Neutral cream backgrounds */
+  --color-cream-50: #fbfcfd;
+  --color-cream-100: #f5f6f9;
+  --color-cream-200: #eef0f4;
+
+  /* Deep navy ink — the primary dark */
+  --color-ink-50: #f4f6fa;
+  --color-ink-100: #e8ecf3;
+  --color-ink-200: #d3dae6;
+  --color-ink-300: #aab7cd;
+  --color-ink-400: #7f91af;
+  --color-ink-500: #5d7094;
+  --color-ink-600: #45567a;
+  --color-ink-700: #33405f;
+  --color-ink-800: #202a44;
+  --color-ink-900: #131a30;
+  --color-ink-950: #0a0e1f;
+
+  /* Brand indigo accent */
+  --color-brand-50: #eef1ff;
+  --color-brand-100: #e0e6ff;
+  --color-brand-200: #c7d0fe;
+  --color-brand-300: #a4b2fc;
+  --color-brand-400: #818cf8;
+  --color-brand-500: #6366f1;
+  --color-brand-600: #4f46e5;
+  --color-brand-700: #4338ca;
+  --color-brand-800: #3730a3;
+  --color-brand-900: #312e81;
+
+  /* Positive — restrained green */
+  --color-pos-50: #ecfdf4;
+  --color-pos-100: #d1fae4;
+  --color-pos-200: #a7f3cc;
+  --color-pos-300: #6ee7ae;
+  --color-pos-400: #34d38e;
+  --color-pos-500: #10b474;
+  --color-pos-600: #07925e;
+  --color-pos-700: #06754e;
+  --color-pos-800: #085c40;
+  --color-pos-900: #084c37;
+
+  /* Warning amber */
+  --color-warn-50: #fffbeb;
+  --color-warn-100: #fef3c7;
+  --color-warn-200: #fde68a;
+  --color-warn-300: #fcd34d;
+  --color-warn-400: #fbbf24;
+  --color-warn-500: #f59e0b;
+  --color-warn-600: #d97706;
+  --color-warn-700: #b45309;
+  --color-warn-800: #92400e;
+
+  /* Danger */
+  --color-danger-50: #fef2f3;
+  --color-danger-100: #fde3e5;
+  --color-danger-200: #fccdd1;
+  --color-danger-300: #f8a5ad;
+  --color-danger-400: #f26d7c;
+  --color-danger-500: #e5484d;
+  --color-danger-600: #d6293c;
+  --color-danger-700: #b41f33;
+  --color-danger-800: #971e31;
+  --color-danger-900: #821e30;
+
+  /* Soft elevated shadows with real depth */
+  --shadow-card: 0 1px 2px rgb(10 14 31 / 0.05), 0 4px 16px rgb(10 14 31 / 0.05);
+  --shadow-lift: 0 2px 4px rgb(10 14 31 / 0.06), 0 12px 32px rgb(10 14 31 / 0.10);
+  --shadow-pop: 0 8px 16px rgb(10 14 31 / 0.10), 0 24px 56px rgb(10 14 31 / 0.16);
+
+  --radius-xl2: 1.25rem;
+  --radius-xl3: 1.75rem;
+
+  --animate-rise: rise 0.45s cubic-bezier(0.22, 1, 0.36, 1) both;
+  --animate-fade: fade 0.3s ease both;
+  --animate-pop: pop 0.35s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+  --animate-shimmer: shimmer 1.8s linear infinite;
+}
+
+@keyframes rise {
+  from { opacity: 0; transform: translateY(14px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes fade {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+@keyframes pop {
+  from { opacity: 0; transform: scale(0.92); }
+  to { opacity: 1; transform: scale(1); }
+}
+@keyframes shimmer {
+  from { background-position: 200% 0; }
+  to { background-position: -200% 0; }
+}
+@keyframes scan {
+  0% { transform: translateY(-120%); opacity: 0; }
+  20% { opacity: 1; }
+  80% { opacity: 1; }
+  100% { transform: translateY(120%); opacity: 0; }
+}
+@keyframes floaty {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-6px); }
+}
+@keyframes ring {
+  0% { box-shadow: 0 0 0 0 rgb(99 102 241 / 0.45); }
+  70% { box-shadow: 0 0 0 22px rgb(99 102 241 / 0); }
+  100% { box-shadow: 0 0 0 0 rgb(99 102 241 / 0); }
+}
+
+@layer base {
+  html {
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+  body {
+    font-family: var(--font-sans);
+    background-color: var(--color-cream-100);
+    color: var(--color-ink-900);
+    font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11';
+  }
+  h1, h2, h3, h4 {
+    font-family: var(--font-display);
+    letter-spacing: -0.02em;
+  }
+  *, ::before, ::after {
+    border-color: var(--color-ink-100);
+  }
+  ::selection {
+    background: var(--color-brand-200);
+    color: var(--color-ink-950);
+  }
+  button, a, input, select, textarea {
+    -webkit-tap-highlight-color: transparent;
+  }
+  :focus-visible {
+    outline: 2px solid var(--color-brand-500);
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
+}
+
+@layer components {
+  /* Money figures always align column-wise */
+  .tnum {
+    font-variant-numeric: tabular-nums;
+    font-feature-settings: 'tnum';
+  }
+  /* Preserve 3D for tilt cards */
+  .preserve-3d {
+    transform-style: preserve-3d;
+  }
+  .backface-hidden {
+    backface-visibility: hidden;
+  }
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .safe-bottom {
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+  .shimmer {
+    background: linear-gradient(
+      90deg,
+      var(--color-cream-100) 25%,
+      var(--color-ink-100) 50%,
+      var(--color-cream-100) 75%
+    );
+    background-size: 200% 100%;
+    animation: var(--animate-shimmer);
+  }
+  .animate-scan {
+    animation: scan 2.4s ease-in-out infinite;
+  }
+  .animate-floaty {
+    animation: floaty 5s ease-in-out infinite;
+  }
+  .animate-ring {
+    animation: ring 2s cubic-bezier(0.2, 0.6, 0.35, 1) infinite;
+  }
+}
+
+/* Thin, quiet scrollbars */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--color-ink-200);
+  border-radius: 999px;
+  border: 2px solid transparent;
+  background-clip: content-box;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-ink-300);
+  background-clip: content-box;
+  border: 2px solid transparent;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
