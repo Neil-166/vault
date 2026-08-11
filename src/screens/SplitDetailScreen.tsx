@@ -81,7 +81,7 @@ export default function SplitDetailScreen() {
           {bill.participants.map((p) => {
             const isYou = p.name === USER.name
             return (
-              <div key={p.id} className="flex items-center gap-3 rounded-xl px-3 py-3">
+              <motion.div key={p.id} layout initial={{ opacity: 0 }} animate={{ opacity: 1, backgroundColor: p.paid ? 'rgba(16,180,116,0.04)' : 'transparent' }} transition={{ duration: 0.3 }} className="flex items-center gap-3 rounded-xl px-3 py-3">
                 <Avatar initials={p.initials} hue={p.hue} size={40} />
                 <div className="min-w-0 flex-1">
                   <p className="flex items-center gap-2 truncate text-[15px] font-medium text-ink-900">
@@ -123,7 +123,7 @@ export default function SplitDetailScreen() {
                     {isYou && <Badge tone="warn">Awaiting</Badge>}
                   </div>
                 )}
-              </div>
+              </motion.div>
             )
           })}
         </Card>

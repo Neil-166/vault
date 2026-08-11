@@ -101,9 +101,11 @@ export interface VaultState {
   history: Route[]
   payMenuOpen: boolean
   locked: boolean
+  theme: 'light' | 'dark'
 
   unlock: () => void
   lock: () => void
+  toggleTheme: () => void
   go: (r: Route) => void
   back: () => void
   resetToHome: () => void
@@ -150,7 +152,9 @@ export const useVault = create<VaultState>((set, get) => ({
   history: [{ name: 'home' }],
   payMenuOpen: false,
   locked: true,
+  theme: 'light' as 'light' | 'dark',
 
+  toggleTheme: () => set((s) => ({ theme: s.theme === 'light' ? 'dark' : 'light' })),
   unlock: () => set({ locked: false }),
   lock: () =>
     set({

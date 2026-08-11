@@ -8,6 +8,7 @@ import {
   Lightbulb,
   Link2,
   LogOut,
+  Moon,
   Lock,
   Settings,
   ShieldCheck,
@@ -35,6 +36,8 @@ export default function ProfileScreen() {
   const go = useVault((s) => s.go)
   const lock = useVault((s) => s.lock)
   const pushToast = useVault((s) => s.pushToast)
+  const theme = useVault((s) => s.theme)
+  const toggleTheme = useVault((s) => s.toggleTheme)
 
   const [infoOpen, setInfoOpen] = useState(false)
   const [paymentsOpen, setPaymentsOpen] = useState(false)
@@ -77,6 +80,7 @@ export default function ProfileScreen() {
         <MenuRow icon={<CreditCard size={18} />} label="Payment methods" value={PAYMENT_METHODS.length.toString()} onClick={() => setPaymentsOpen(true)} />
         <MenuRow icon={<Landmark size={18} />} label="Connected accounts" value={LINKED_ACCOUNTS.length.toString()} onClick={() => setAccountsOpen(true)} />
         <MenuRow icon={<Lock size={18} />} label="Privacy" onClick={() => go({ name: 'privacy' })} />
+        <MenuRow icon={<Moon size={18} />} label="Dark mode" value={theme === 'dark' ? 'On' : 'Off'} onClick={toggleTheme} />
         <MenuRow icon={<Settings size={18} />} label="Settings" value="Currency · language" onClick={() => go({ name: 'settings' })} />
         <MenuRow icon={<HelpCircle size={18} />} label="Help & support" onClick={() => go({ name: 'help' })} />
       </MenuCard>

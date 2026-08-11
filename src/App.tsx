@@ -1,9 +1,11 @@
-import { type ComponentType } from 'react'
+import { type ComponentType, useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 import { Navigation } from './components/Navigation'
 import { Toasts } from './components/ui/Toasts'
 import { useVault, type Route } from './store/useVault'
+import LandingScreen from './screens/LandingScreen'
 import LockScreen from './screens/LockScreen'
+import OnboardingScreen from './screens/OnboardingScreen'
 import Dashboard from './screens/Dashboard'
 import ActivityScreen from './screens/ActivityScreen'
 import GoalsScreen from './screens/GoalsScreen'
@@ -15,7 +17,7 @@ import SplitDetailScreen from './screens/SplitDetailScreen'
 import GoalDetailScreen from './screens/GoalDetailScreen'
 import AddMoneyScreen from './screens/AddMoneyScreen'
 import NotificationsScreen from './screens/NotificationsScreen'
-import InsightsScreen from './screens/InsightsScreen'
+import AnalyticsScreen from './screens/AnalyticsScreen'
 import TransactionDetailScreen from './screens/TransactionDetailScreen'
 import SecurityScreen from './screens/SecurityScreen'
 import DevicesScreen from './screens/DevicesScreen'
@@ -35,7 +37,7 @@ const SCREENS: Partial<Record<Route['name'], ComponentType>> = {
   goalDetail: GoalDetailScreen,
   addMoney: AddMoneyScreen,
   notifications: NotificationsScreen,
-  insights: InsightsScreen,
+  insights: AnalyticsScreen,
   transaction: TransactionDetailScreen,
   security: SecurityScreen,
   devices: DevicesScreen,
@@ -45,17 +47,22 @@ const SCREENS: Partial<Record<Route['name'], ComponentType>> = {
 }
 
 export default function App() {
+  const [landed, setLanded] = useState(false)
+  const [onboarded, setOnboarded] = useState(false)
   const locked = useVault((s) => s.locked)
   const unlock = useVault((s) => s.unlock)
   const route = useVault((s) => s.route)
+  const theme = useVault((s) => s.theme)
 
+  if (!landed) return <LandingScreen onEnter={() => setLanded(true)} />
   if (locked) return <LockScreen onUnlock={unlock} />
+  if (!onboarded) return <OnboardingScreen onComplete={() => setOnboarded(true)} />
 
   const Screen = SCREENS[route.name] ?? Dashboard
   const transitionKey = route.name === 'home' ? 'home' : route.name
 
   return (
-    <div className="min-h-screen bg-cream-100">
+    <div className={`min-h-screen ${theme === 'dark' ? 'dark' : ''}`} style={{ backgroundColor: 'var(--vault-bg)', color: 'var(--vault-text)' }}>
       <Navigation />
       <div className="lg:pl-64">
         <AnimatePresence mode="wait" initial={false}>
