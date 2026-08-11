@@ -83,26 +83,48 @@ function SuccessCheck() {
       transition={{ type: 'spring', damping: 14 }}
       className="relative"
     >
+      {/* Soft expanding ring */}
+      <motion.div
+        className="absolute inset-0 rounded-full"
+        initial={{ scale: 0.8, opacity: 0 }}
+        animate={{ scale: 2.2, opacity: 0 }}
+        transition={{ delay: 0.3, duration: 0.8, ease: 'easeOut' }}
+        style={{ background: 'radial-gradient(circle, hsl(152 62% 42% / 0.15), transparent 70%)' }}
+      />
+
+      {/* Subtle particle dots */}
+      {[0, 1, 2, 3, 4, 5].map((i) => {
+        const angle = (i * 60) * (Math.PI / 180)
+        const dist = 52
+        return (
+          <motion.span
+            key={i}
+            className="absolute h-1.5 w-1.5 rounded-full bg-pos-400"
+            style={{ left: '50%', top: '50%' }}
+            initial={{ x: 0, y: 0, opacity: 0, scale: 0 }}
+            animate={{
+              x: Math.cos(angle) * dist,
+              y: Math.sin(angle) * dist,
+              opacity: [0, 0.6, 0],
+              scale: [0, 1, 0.5],
+            }}
+            transition={{ delay: 0.35 + i * 0.04, duration: 0.6, ease: 'easeOut' }}
+          />
+        )
+      })}
+
+      {/* Checkmark */}
       <motion.svg viewBox="0 0 64 64" className="h-20 w-20" aria-hidden>
         <motion.circle
-          cx="32"
-          cy="32"
-          r="29"
-          fill="none"
-          stroke="hsl(152 62% 42%)"
-          strokeWidth="3"
-          strokeLinecap="round"
+          cx="32" cy="32" r="29"
+          fill="none" stroke="hsl(152 62% 42%)" strokeWidth="3" strokeLinecap="round"
           initial={{ pathLength: 0 }}
           animate={{ pathLength: 1 }}
           transition={{ duration: 0.5, ease: 'easeOut' }}
         />
         <motion.path
           d="M20 33.5l8.5 8.5L44 23"
-          fill="none"
-          stroke="hsl(152 62% 42%)"
-          strokeWidth="4.5"
-          strokeLinecap="round"
-          strokeLinejoin="round"
+          fill="none" stroke="hsl(152 62% 42%)" strokeWidth="4.5" strokeLinecap="round" strokeLinejoin="round"
           initial={{ pathLength: 0 }}
           animate={{ pathLength: 1 }}
           transition={{ delay: 0.45, duration: 0.3, ease: 'easeOut' }}
