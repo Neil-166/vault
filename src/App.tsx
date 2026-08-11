@@ -5,7 +5,6 @@ import { Toasts } from './components/ui/Toasts'
 import { useVault, type Route } from './store/useVault'
 import LandingScreen from './screens/LandingScreen'
 import LockScreen from './screens/LockScreen'
-import OnboardingScreen from './screens/OnboardingScreen'
 import Dashboard from './screens/Dashboard'
 import ActivityScreen from './screens/ActivityScreen'
 import GoalsScreen from './screens/GoalsScreen'
@@ -48,7 +47,6 @@ const SCREENS: Partial<Record<Route['name'], ComponentType>> = {
 
 export default function App() {
   const [landed, setLanded] = useState(false)
-  const [onboarded, setOnboarded] = useState(false)
   const locked = useVault((s) => s.locked)
   const unlock = useVault((s) => s.unlock)
   const route = useVault((s) => s.route)
@@ -56,7 +54,6 @@ export default function App() {
 
   if (!landed) return <LandingScreen onEnter={() => setLanded(true)} />
   if (locked) return <LockScreen onUnlock={unlock} />
-  if (!onboarded) return <OnboardingScreen onComplete={() => setOnboarded(true)} />
 
   const Screen = SCREENS[route.name] ?? Dashboard
   const transitionKey = route.name === 'home' ? 'home' : route.name

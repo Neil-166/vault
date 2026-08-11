@@ -2,6 +2,7 @@ import { useState } from 'react'
 import {
   BadgeCheck,
   Bell,
+  Check,
   CreditCard,
   HelpCircle,
   Landmark,
@@ -43,6 +44,8 @@ export default function ProfileScreen() {
   const [paymentsOpen, setPaymentsOpen] = useState(false)
   const [accountsOpen, setAccountsOpen] = useState(false)
   const [logoutOpen, setLogoutOpen] = useState(false)
+  const [bankPicker, setBankPicker] = useState(false)
+  const [newBank, setNewBank] = useState('')
 
   return (
     <div className="space-y-5">
@@ -162,9 +165,31 @@ export default function ProfileScreen() {
             </div>
           ))}
         </div>
-        <Button fullWidth variant="secondary" className="mt-4" onClick={() => pushToast({ tone: 'info', title: 'Link a bank account', body: 'Bank linking is simulated in this prototype.' })}>
+        <Button fullWidth variant="secondary" className="mt-4" onClick={() => setBankPicker(true)}>
           <Link2 size={16} /> Link another account
         </Button>
+      </Modal>
+
+      {/* Bank picker */}
+      <Modal open={bankPicker} onClose={() => setBankPicker(false)} title="Link a bank account" footer={
+        <Button fullWidth size="lg" disabled={!newBank} onClick={() => {
+          if (newBank) {
+            pushToast({ tone: 'success', title: 'Bank connected', body: `${newBank} has been linked to your VAULT account.` })
+            setBankPicker(false)
+            setNewBank('')
+          }
+        }}>
+          Connect {newBank || 'bank'}
+        </Button>
+      }>
+        <p className="mb-3 text-[13px] text-ink-400">Choose your bank to link it to VAULT.</p>
+        {['HDFC Bank', 'State Bank of India', 'ICICI Bank', 'Axis Bank'].map((bank) => (
+          <button key={bank} onClick={() => setNewBank(bank)} className={`flex w-full items-center gap-3 rounded-xl border p-3.5 text-left transition-all mb-2 ${newBank === bank ? 'border-brand-400 bg-brand-50' : 'border-ink-100 hover:border-ink-200'}`}>
+            <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-ink-100 text-ink-600 text-sm font-bold">{bank.charAt(0)}</span>
+            <span className="flex-1 text-sm font-medium text-ink-800">{bank}</span>
+            {newBank === bank && <Check size={16} className="text-brand-600" />}
+          </button>
+        ))}
       </Modal>
 
       {/* Logout */}

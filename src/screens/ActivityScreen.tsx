@@ -1,6 +1,8 @@
 import { useMemo, useState } from 'react'
 import { BellRing, Receipt, Scale, Search } from 'lucide-react'
 import { Avatar, Button, Card, Chip, SearchBar } from '../components/ui/primitives'
+import { BottomSheet } from '../components/ui/BottomSheet'
+import { TransactionSheet } from '../components/TransactionSheet'
 import { TransactionItem } from '../components/TransactionItem'
 import { EmptyState } from '../components/ui/EmptyState'
 import { useVault, USER } from '../store/useVault'
@@ -21,6 +23,7 @@ export default function ActivityScreen() {
 
   const [query, setQuery] = useState('')
   const [filter, setFilter] = useState<Filter>('All')
+  const [selectedTx, setSelectedTx] = useState<Transaction | null>(null)
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase()
@@ -143,7 +146,7 @@ export default function ActivityScreen() {
               </h2>
               <Card className="divide-y divide-ink-100 px-2 py-1">
                 {txs.map((tx) => (
-                  <TransactionItem key={tx.id} tx={tx} onClick={() => go({ name: 'transaction', id: tx.id })} />
+                  <TransactionItem key={tx.id} tx={tx} onClick={() => setSelectedTx(tx)} />
                 ))}
               </Card>
             </section>
@@ -154,6 +157,11 @@ export default function ActivityScreen() {
       <p className="flex items-center justify-center gap-1.5 pt-2 text-xs text-ink-400">
         <Receipt size={13} /> {transactions.length} transactions on record
       </p>
+
+      {/* Transaction detail sheet */}
+      <BottomSheet open={!!selectedTx} onClose={() => setSelectedTx(null)} title="Transaction details">
+        {selectedTx && <TransactionSheet tx={selectedTx} />}
+      </BottomSheet>
     </div>
   )
 }

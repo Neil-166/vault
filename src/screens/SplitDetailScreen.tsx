@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { motion } from 'framer-motion'
 import { BellRing, Check, CheckCircle2, Scale } from 'lucide-react'
 import { Avatar, Badge, Button, Card } from '../components/ui/primitives'
@@ -14,6 +15,14 @@ export default function SplitDetailScreen() {
   const remindParticipant = useVault((s) => s.remindParticipant)
   const pushToast = useVault((s) => s.pushToast)
   const go = useVault((s) => s.go)
+  const [reminded, setReminded] = useState<Record<string, boolean>>({})
+
+  const handleRemind = (pid: string) => {
+    if (!bill) return
+    remindParticipant(bill.id, pid)
+    setReminded((r) => ({ ...r, [pid]: true }))
+    setTimeout(() => setReminded((r) => ({ ...r, [pid]: false })), 1800)
+  }
 
   if (!bill) {
     return (
@@ -100,12 +109,15 @@ export default function SplitDetailScreen() {
                       <>
                         <Button
                           size="sm"
-                          variant="secondary"
-                          onClick={() => remindParticipant(bill.id, p.id)}
-                          className="h-8 px-2.5 text-xs"
+                          variant={reminded[p.id] ? 'soft' : 'secondary'}
+                          onClick={() => handleRemind(p.id)}
+                          className={`h-8 px-2.5 text-xs transition-all duration-200 ${reminded[p.id] ? 'bg-pos-50 text-pos-700 border-pos-200' : ''}`}
                         >
-                          <BellRing size={13} />
-                          {p.remindedAt ? 'Remind again' : 'Remind'}
+                          {reminded[p.id] ? (
+                            <><Check size={13} /> Sent</>
+                          ) : (
+                            <><BellRing size={13} /> {p.remindedAt ? 'Remind again' : 'Remind'}</>
+                          )}
                         </Button>
                         <Button
                           size="sm"

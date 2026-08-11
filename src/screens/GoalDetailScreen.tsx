@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { motion } from 'framer-motion'
-import { PiggyBank, Plus, Trash2 } from 'lucide-react'
+import { Check, PiggyBank, Plus, Trash2 } from 'lucide-react'
 import { Button, Card } from '../components/ui/primitives'
 import { Modal } from '../components/ui/Modal'
 import { ConfirmationDialog } from '../components/ui/ConfirmationDialog'
@@ -76,6 +76,17 @@ export default function GoalDetailScreen() {
             <div className="h-full rounded-full bg-white transition-all duration-700" style={{ width: `${pct}%` }} />
           </div>
         </motion.div>
+
+        {/* Goal completion celebration */}
+        {pct >= 100 && (
+          <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} transition={{ type: 'spring', damping: 14 }} className="mt-4 rounded-2xl border border-pos-200 bg-pos-50 p-5 text-center">
+            <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ type: 'spring', damping: 12, delay: 0.1 }} className="mx-auto mb-3 flex h-14 w-14 items-center justify-center rounded-full bg-pos-500 text-white">
+              <Check size={28} />
+            </motion.div>
+            <p className="font-display text-lg font-bold text-pos-800">Goal reached</p>
+            <p className="tnum mt-1 text-sm text-pos-700">{inr(goal.target)} saved · Target reached ✓</p>
+          </motion.div>
+        )}
 
         {/* Stats */}
         <div className="mt-4 grid grid-cols-3 gap-2.5">

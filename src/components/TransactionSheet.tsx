@@ -1,0 +1,81 @@
+import { Copy } from 'lucide-react'
+import { Avatar, Badge } from './ui/primitives'
+import { CategoryIcon } from './ui/CategoryIcon'
+import { useVault } from '../store/useVault'
+import { inr, longDate } from '../utils/format'
+import type { Transaction } from '../types'
+
+export function TransactionSheet({ tx }: { tx: Transaction }) {
+  const pushToast = useVault((s) => s.pushToast)
+  const isCredit = tx.type === 'credit'
+  const isPerson = tx.category === 'Transfer' || tx.category === 'Savings'
+
+  const copyId = () => {
+    navigator.clipboard?.writeText(tx.id).catch(() => {})
+    pushToast({ tone: 'success', title: 'Copied', body: 'Transaction ID copied.' })
+  }
+
+  return (
+    <div className="px-5 pb-8 pt-2">
+      {/* Amount */}
+      <div className="flex flex-col items-center text-center pb-5">
+        {isPerson ? (
+          <Avatar
+            initials={tx.merchant.split(' ').slice(0, 2).map((p) => p[0]).join('').toUpperCase()}
+            hue={hueOf(tx.merchant)}
+            size={56}
+            verified={isCredit}
+          />
+        ) : (
+          <CategoryIcon category={tx.category} size={56} />
+        )}
+        <p className="mt-3 text-[13px] font-medium text-ink-400">{tx.detail ?? tx.category}</p>
+        <p className="mt-0.5 font-display text-xl font-semibold text-ink-900">{tx.merchant}</p>
+        <p className={`tnum mt-2 font-display text-[32px] font-bold leading-none ${isCredit ? 'text-pos-600' : 'text-ink-950'}`}>
+          {isCredit ? '+' : '−'}{inr(tx.amount)}
+        </p>
+        <div className="mt-2">
+          {tx.status === 'Completed' ? (
+            <Badge tone="success">Completed</Badge>
+          ) : tx.status === 'Pending' ? (
+            <Badge tone="warn">Pending</Badge>
+          ) : (
+            <Badge tone="error">Failed</Badge>
+          )}
+        </div>
+      </div>
+
+      {/* Details */}
+      <div className="rounded-2xl border border-ink-100 bg-white divide-y divide-ink-100">
+        <MetaRow label="Date & time" value={longDate(tx.date, tx.time)} />
+        <MetaRow label="Payment method" value={tx.method} />
+        <MetaRow label="Category" value={tx.category} />
+        <MetaRow label="Fee" value={tx.fee === 0 ? '₹0' : `₹${tx.fee}`} accent={tx.fee === 0} />
+        <MetaRow label="Balance after" value={inr(tx.balanceAfter)} />
+        {tx.note && <MetaRow label="Note" value={tx.note} />}
+        <div className="flex items-center justify-between px-4 py-3">
+          <span className="text-[13px] text-ink-500">Transaction ID</span>
+          <button onClick={copyId} className="flex items-center gap-1.5 rounded-lg px-2 py-1 text-[13px] font-medium text-brand-600 hover:bg-brand-50 transition-colors">
+            <span className="tnum font-mono text-[12px] text-ink-600">{tx.id.slice(0, 16)}…</span>
+            <Copy size={13} />
+          </button>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+function MetaRow({ label, value, accent }: { label: string; value: string; accent?: boolean }) {
+  return (
+    <div className="flex items-center justify-between px-4 py-3">
+      <span className="text-[13px] text-ink-500">{label}</span>
+      <span className={`tnum text-[13px] font-semibold ${accent ? 'text-pos-600' : 'text-ink-800'}`}>{value}</span>
+    </div>
+  )
+}
+
+function hueOf(name: string): number {
+  let h = 0
+  for (let i = 0; i < name.length; i++) h = (h * 31 + name.charCodeAt(i)) % 360
+  return h
+}

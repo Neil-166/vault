@@ -1,4 +1,4 @@
-import { useMemo } from 'react'
+import { useMemo, useState } from 'react'
 import {
   ArrowDownToLine,
   ArrowUpRight,
@@ -10,6 +10,8 @@ import {
   Send,
 } from 'lucide-react'
 import { Avatar, Card, Button } from '../components/ui/primitives'
+import { BottomSheet } from '../components/ui/BottomSheet'
+import { TransactionSheet } from '../components/TransactionSheet'
 import { BalanceCard } from '../components/BalanceCard'
 import { TransactionItem } from '../components/TransactionItem'
 import { ProgressBar } from '../components/ui/primitives'
@@ -80,6 +82,7 @@ export default function Dashboard() {
   const declineRequest = useVault((s) => s.declineRequest)
   const pushToast = useVault((s) => s.pushToast)
   const unreadCount = useVault((s) => s.notifications.filter((n) => !n.read).length)
+  const [selectedTx, setSelectedTx] = useState<Transaction | null>(null)
 
   const week = useMemo(() => thisWeekSpend(transactions), [transactions])
   const prevWeek = useMemo(() => lastWeekSpend(transactions), [transactions])
@@ -293,7 +296,7 @@ export default function Dashboard() {
             <TransactionItem
               key={tx.id}
               tx={tx}
-              onClick={() => go({ name: 'transaction', id: tx.id })}
+              onClick={() => setSelectedTx(tx)}
             />
           ))}
         </Card>
@@ -344,6 +347,11 @@ export default function Dashboard() {
           <Send size={17} /> Send money now
         </Button>
       </section>
+
+      {/* Transaction detail sheet */}
+      <BottomSheet open={!!selectedTx} onClose={() => setSelectedTx(null)} title="Transaction details">
+        {selectedTx && <TransactionSheet tx={selectedTx} />}
+      </BottomSheet>
     </div>
   )
 }
