@@ -47,7 +47,7 @@ export default function SplitDetailScreen() {
           </div>
           <p className="tnum mt-4 font-display text-[32px] font-bold leading-none">{inr(bill.total)}</p>
           <p className="mt-2 text-[13px] text-ink-300">
-            {humanDate(bill.date)} · {bill.participants.length} people · {bill.splitMode === 'equal' ? 'equal split' : 'custom split'}
+            {humanDate(bill.date)} · {bill.participants.length} people · {bill.splitMode === 'equal' ? 'equal split' : bill.splitMode === 'item' ? 'item-based split' : 'custom split'}
           </p>
           <div className="mt-4 h-1.5 overflow-hidden rounded-full bg-white/10">
             <div className="h-full rounded-full bg-pos-400 transition-all duration-700" style={{ width: `${pct}%` }} />

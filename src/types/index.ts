@@ -58,7 +58,7 @@ export interface Goal {
   hue: number
 }
 
-export type SplitMode = 'equal' | 'custom'
+export type SplitMode = 'equal' | 'custom' | 'item'
 
 export interface BillParticipant {
   id: string
