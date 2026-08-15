@@ -4,6 +4,7 @@ import {
   ArrowUpRight,
   Bell,
   BellRing,
+  CheckCircle2,
   ChevronRight,
   HandCoins,
   Scale,
@@ -128,13 +129,28 @@ export default function Dashboard() {
         </div>
       </header>
 
-      {/* Balance card */}
+      {/* Confidence Banner */}
       <section className="animate-rise">
+        <div className="flex items-center justify-between gap-3 rounded-2xl border border-pos-200 bg-pos-50/80 px-4 py-3 text-xs text-pos-800 shadow-card">
+          <div className="flex items-center gap-2.5">
+            <CheckCircle2 size={16} className="shrink-0 text-pos-600" />
+            <span>
+              <strong className="font-semibold text-pos-900">You're all set.</strong> No unusual payments or hidden fees detected today.
+            </span>
+          </div>
+          <span className="hidden sm:inline-flex items-center gap-1 rounded-full bg-pos-100 px-2.5 py-0.5 text-[11px] font-semibold text-pos-700">
+            Protected
+          </span>
+        </div>
+      </section>
+
+      {/* Balance card */}
+      <section className="animate-rise" style={{ animationDelay: '40ms' }}>
         <BalanceCard balance={balance} hideBalance={hideBalance} onToggleHide={toggleHideBalance} />
       </section>
 
       {/* Quick actions */}
-      <section className="animate-rise grid grid-cols-4 gap-2.5" style={{ animationDelay: '60ms' }}>
+      <section className="animate-rise grid grid-cols-4 gap-2.5" style={{ animationDelay: '80ms' }}>
         <QuickAction icon={Send} label="Send" onClick={() => go({ name: 'send' })} tint="bg-brand-50 text-brand-600" />
         <QuickAction icon={HandCoins} label="Request" onClick={() => go({ name: 'request' })} tint="bg-pos-50 text-pos-600" />
         <QuickAction icon={Scale} label="Split bill" onClick={() => go({ name: 'split' })} tint="bg-warn-50 text-warn-600" />
@@ -145,7 +161,7 @@ export default function Dashboard() {
       {attentionCount > 0 && (
         <section
           className="animate-rise overflow-hidden rounded-2xl border border-warn-200 bg-warn-50/60"
-          style={{ animationDelay: '100ms' }}
+          style={{ animationDelay: '120ms' }}
         >
           <div className="flex items-center gap-2 border-b border-warn-100 px-4 py-3">
             <BellRing size={16} className="text-warn-600" />
@@ -192,7 +208,7 @@ export default function Dashboard() {
                       {inr(total)} owed for {b.title}
                     </p>
                     <p className="text-[13px] text-ink-500">
-                      {unpaid.length} of {b.participants.length - 1} friends haven’t paid
+                      {unpaid.length} of {b.participants.length - 1} friends haven’t paid yet
                     </p>
                   </div>
                   <Button
@@ -238,7 +254,7 @@ export default function Dashboard() {
       )}
 
       {/* Spending this week */}
-      <section className="animate-rise rounded-2xl border border-ink-100 bg-white p-5 shadow-card" style={{ animationDelay: '140ms' }}>
+      <section className="animate-rise rounded-2xl border border-ink-100 bg-white p-5 shadow-card" style={{ animationDelay: '160ms' }}>
         <div className="flex items-baseline justify-between">
           <div>
             <h2 className="font-display text-[15px] font-semibold text-ink-900">Spending this week</h2>
@@ -248,7 +264,7 @@ export default function Dashboard() {
                 <>
                   {' '}
                   ·{' '}
-                  <span className={weekTotal <= prevWeek ? 'text-pos-600' : 'text-danger-600'}>
+                  <span className={weekTotal <= prevWeek ? 'text-pos-600 font-semibold' : 'text-danger-600 font-semibold'}>
                     {weekTotal <= prevWeek ? 'down' : 'up'} {Math.abs(Math.round(((weekTotal - prevWeek) / prevWeek) * 100))}%
                   </span>{' '}
                   vs last week
@@ -256,6 +272,12 @@ export default function Dashboard() {
               )}
             </p>
           </div>
+          <button
+            onClick={() => go({ name: 'insights' })}
+            className="text-xs font-medium text-brand-600 hover:text-brand-700"
+          >
+            Insights →
+          </button>
         </div>
         <div className="mt-5 flex h-28 items-end gap-2" role="img" aria-label="Daily spending bar chart">
           {week.map((d, i) => (
@@ -270,7 +292,7 @@ export default function Dashboard() {
                     ? 'bg-gradient-to-b from-brand-500 to-brand-700'
                     : 'bg-ink-200 group-hover:bg-ink-300'
                 }`}
-                style={{ height: `${Math.max((d.amount / maxDay) * 100, 3)}%` }}
+                style={{ height: `${Math.max((d.amount / maxDay) * 100, 4)}%` }}
               />
               <span className={`text-[11px] font-medium ${d.isToday ? 'text-brand-700' : 'text-ink-400'}`}>
                 {d.label}
@@ -281,7 +303,7 @@ export default function Dashboard() {
       </section>
 
       {/* Recent transactions */}
-      <section className="animate-rise" style={{ animationDelay: '180ms' }}>
+      <section className="animate-rise" style={{ animationDelay: '200ms' }}>
         <div className="mb-2 flex items-center justify-between">
           <h2 className="font-display text-[15px] font-semibold text-ink-900">Recent activity</h2>
           <button
@@ -303,7 +325,7 @@ export default function Dashboard() {
       </section>
 
       {/* Savings goals */}
-      <section className="animate-rise" style={{ animationDelay: '220ms' }}>
+      <section className="animate-rise" style={{ animationDelay: '240ms' }}>
         <div className="mb-2 flex items-center justify-between">
           <h2 className="font-display text-[15px] font-semibold text-ink-900">Savings goals</h2>
           <button
@@ -342,7 +364,7 @@ export default function Dashboard() {
       </section>
 
       {/* Primary CTA */}
-      <section className="animate-rise pb-2 text-center" style={{ animationDelay: '260ms' }}>
+      <section className="animate-rise pb-2 text-center" style={{ animationDelay: '280ms' }}>
         <Button size="lg" onClick={openPayMenu} className="w-full sm:w-auto sm:px-10">
           <Send size={17} /> Send money now
         </Button>

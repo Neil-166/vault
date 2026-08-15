@@ -1,8 +1,9 @@
 import { Copy } from 'lucide-react'
 import { Avatar, Badge } from './ui/primitives'
 import { CategoryIcon } from './ui/CategoryIcon'
+import { TransactionExplanation } from './TransactionExplanation'
 import { useVault } from '../store/useVault'
-import { inr, longDate } from '../utils/format'
+import { inr, inrFull, longDate } from '../utils/format'
 import type { Transaction } from '../types'
 
 export function TransactionSheet({ tx }: { tx: Transaction }) {
@@ -16,9 +17,9 @@ export function TransactionSheet({ tx }: { tx: Transaction }) {
   }
 
   return (
-    <div className="px-5 pb-8 pt-2">
-      {/* Amount */}
-      <div className="flex flex-col items-center text-center pb-5">
+    <div className="px-5 pb-8 pt-2 space-y-5">
+      {/* Amount & Identity */}
+      <div className="flex flex-col items-center text-center pb-2">
         {isPerson ? (
           <Avatar
             initials={tx.merchant.split(' ').slice(0, 2).map((p) => p[0]).join('').toUpperCase()}
@@ -34,24 +35,27 @@ export function TransactionSheet({ tx }: { tx: Transaction }) {
         <p className={`tnum mt-2 font-display text-[32px] font-bold leading-none ${isCredit ? 'text-pos-600' : 'text-ink-950'}`}>
           {isCredit ? '+' : '−'}{inr(tx.amount)}
         </p>
-        <div className="mt-2">
+        <p className="mt-1 text-xs font-semibold uppercase tracking-wider text-ink-400">
+          {isCredit ? 'Money in' : 'Money out'}
+        </p>
+        <div className="mt-2.5">
           {tx.status === 'Completed' ? (
-            <Badge tone="success">Completed</Badge>
+            <Badge tone="success">Payment Completed</Badge>
           ) : tx.status === 'Pending' ? (
-            <Badge tone="warn">Pending</Badge>
+            <Badge tone="warn">Payment Pending</Badge>
           ) : (
-            <Badge tone="error">Failed</Badge>
+            <Badge tone="error">Payment Failed</Badge>
           )}
         </div>
       </div>
 
-      {/* Details */}
-      <div className="rounded-2xl border border-ink-100 bg-white divide-y divide-ink-100">
+      {/* Structured plain English breakdown */}
+      <div className="rounded-2xl border border-ink-100 bg-white divide-y divide-ink-100 shadow-card overflow-hidden">
         <MetaRow label="Date & time" value={longDate(tx.date, tx.time)} />
         <MetaRow label="Payment method" value={tx.method} />
         <MetaRow label="Category" value={tx.category} />
-        <MetaRow label="Fee" value={tx.fee === 0 ? '₹0' : `₹${tx.fee}`} accent={tx.fee === 0} />
-        <MetaRow label="Balance after" value={inr(tx.balanceAfter)} />
+        <MetaRow label="Fee" value={tx.fee === 0 ? '₹0 · No hidden fees' : `₹${tx.fee}`} accent={tx.fee === 0} />
+        <MetaRow label="Available to spend after" value={inrFull(tx.balanceAfter)} />
         {tx.note && <MetaRow label="Note" value={tx.note} />}
         <div className="flex items-center justify-between px-4 py-3">
           <span className="text-[13px] text-ink-500">Transaction ID</span>
@@ -61,6 +65,9 @@ export function TransactionSheet({ tx }: { tx: Transaction }) {
           </button>
         </div>
       </div>
+
+      {/* Transaction explanation component */}
+      <TransactionExplanation tx={tx} />
     </div>
   )
 }

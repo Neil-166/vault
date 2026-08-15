@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react'
-import { BellRing, Receipt, Scale, Search } from 'lucide-react'
+import { BellRing, Scale, Search, ShieldCheck } from 'lucide-react'
 import { Avatar, Button, Card, Chip, SearchBar } from '../components/ui/primitives'
 import { BottomSheet } from '../components/ui/BottomSheet'
 import { TransactionSheet } from '../components/TransactionSheet'
@@ -9,7 +9,7 @@ import { useVault, USER } from '../store/useVault'
 import { humanDate, inr } from '../utils/format'
 import type { Transaction } from '../types'
 
-const FILTERS = ['All', 'Income', 'Expenses', 'Transfers', 'Bills'] as const
+const FILTERS = ['All', 'Money in', 'Money out', 'Transfers', 'Bills'] as const
 type Filter = (typeof FILTERS)[number]
 
 export default function ActivityScreen() {
@@ -28,8 +28,8 @@ export default function ActivityScreen() {
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase()
     return transactions.filter((tx) => {
-      if (filter === 'Income' && tx.type !== 'credit') return false
-      if (filter === 'Expenses' && tx.type !== 'debit') return false
+      if (filter === 'Money in' && tx.type !== 'credit') return false
+      if (filter === 'Money out' && tx.type !== 'debit') return false
       if (filter === 'Transfers' && tx.category !== 'Transfer') return false
       if (filter === 'Bills' && tx.category !== 'Bills') return false
       if (q && !`${tx.merchant} ${tx.detail ?? ''}`.toLowerCase().includes(q)) return false
@@ -55,12 +55,12 @@ export default function ActivityScreen() {
     <div className="space-y-5">
       <header>
         <h1 className="font-display text-[22px] font-bold text-ink-950">Activity</h1>
-        <p className="mt-0.5 text-sm text-ink-400">Every rupee, clearly accounted for.</p>
+        <p className="mt-0.5 text-sm text-ink-400">Every payment, clearly explained.</p>
       </header>
 
       {/* Pending items */}
       {(incoming.length > 0 || outgoing.length > 0 || openBills.length > 0) && (
-        <Card className="divide-y divide-ink-100 px-1 py-1">
+        <Card className="divide-y divide-ink-100 px-1 py-1 shadow-card">
           {incoming.map((r) => (
             <div key={r.id} className="flex items-center gap-3 px-3 py-3">
               <Avatar initials={r.initials} hue={r.hue} size={40} verified />
@@ -114,7 +114,7 @@ export default function ActivityScreen() {
 
       {/* Search + filters */}
       <div>
-        <SearchBar value={query} onChange={setQuery} placeholder="Search transactions" />
+        <SearchBar value={query} onChange={setQuery} placeholder="Search payments by name or note" />
         <div className="mt-3 flex gap-2 overflow-x-auto pb-1 no-scrollbar">
           {FILTERS.map((f) => (
             <Chip key={f} active={filter === f} onClick={() => setFilter(f)}>
@@ -129,11 +129,11 @@ export default function ActivityScreen() {
         <Card>
           <EmptyState
             icon={<Search size={24} />}
-            title={query || filter !== 'All' ? 'No matching transactions' : 'Your transactions will appear here'}
+            title={query || filter !== 'All' ? 'No matching payments' : 'Your payment history will appear here'}
             body={
               query || filter !== 'All'
-                ? 'Try a different search or filter.'
-                : 'When you send, receive, split or save, it shows up here.'
+                ? 'Try a different search keyword or category filter.'
+                : 'When you send, receive, split or save, clear records show up here.'
             }
           />
         </Card>
@@ -144,7 +144,7 @@ export default function ActivityScreen() {
               <h2 className="mb-1.5 px-1 text-[13px] font-semibold text-ink-400">
                 {humanDate(date)}
               </h2>
-              <Card className="divide-y divide-ink-100 px-2 py-1">
+              <Card className="divide-y divide-ink-100 px-2 py-1 shadow-card">
                 {txs.map((tx) => (
                   <TransactionItem key={tx.id} tx={tx} onClick={() => setSelectedTx(tx)} />
                 ))}
@@ -155,11 +155,11 @@ export default function ActivityScreen() {
       )}
 
       <p className="flex items-center justify-center gap-1.5 pt-2 text-xs text-ink-400">
-        <Receipt size={13} /> {transactions.length} transactions on record
+        <ShieldCheck size={14} className="text-pos-600" /> {transactions.length} verified records · Transparent fee breakdown on every payment
       </p>
 
       {/* Transaction detail sheet */}
-      <BottomSheet open={!!selectedTx} onClose={() => setSelectedTx(null)} title="Transaction details">
+      <BottomSheet open={!!selectedTx} onClose={() => setSelectedTx(null)} title="Payment details">
         {selectedTx && <TransactionSheet tx={selectedTx} />}
       </BottomSheet>
     </div>

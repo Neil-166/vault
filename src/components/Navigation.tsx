@@ -29,10 +29,10 @@ const TABS: { key: Tab; label: string; icon: typeof House }[] = [
 ]
 
 const PAY_ACTIONS: { route: Route; icon: typeof Send; title: string; desc: string }[] = [
-  { route: { name: 'send' }, icon: Send, title: 'Send money', desc: 'Pay a contact instantly' },
-  { route: { name: 'request' }, icon: HandCoins, title: 'Request money', desc: 'Ask someone for money' },
-  { route: { name: 'split' }, icon: Scale, title: 'Split a bill', desc: 'Divide an expense fairly' },
-  { route: { name: 'addMoney' }, icon: ArrowDownToLine, title: 'Add money', desc: 'Top up from your bank' },
+  { route: { name: 'send' }, icon: Send, title: 'Send money', desc: 'Pay a verified contact with zero fees' },
+  { route: { name: 'request' }, icon: HandCoins, title: 'Request money', desc: 'Ask someone for a friendly payment' },
+  { route: { name: 'split' }, icon: Scale, title: 'Start a split', desc: 'Divide an expense fairly with friends' },
+  { route: { name: 'addMoney' }, icon: ArrowDownToLine, title: 'Add money', desc: 'Top up instantly from your linked bank' },
 ]
 
 export function Navigation() {
@@ -95,7 +95,7 @@ export function Navigation() {
             onClick={openPayMenu}
             className="mb-3 flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-br from-brand-500 to-brand-700 py-3 text-sm font-semibold text-white shadow-lift transition-transform hover:scale-[1.02] active:scale-[0.98]"
           >
-            <Plus size={18} /> Pay
+            <Plus size={18} /> Quick Pay
           </button>
           <button
             onClick={() => onTab('profile')}
@@ -117,7 +117,7 @@ export function Navigation() {
         aria-label="Primary"
         className="fixed inset-x-0 bottom-0 z-40 border-t border-ink-100 bg-white/95 pb-[env(safe-area-inset-bottom)] backdrop-blur-md lg:hidden"
       >
-        <div className="mx-auto grid h-[68px] max-w-md grid-cols-5 items-center px-2">
+        <div className="mx-auto grid h-[68px] max-w-md grid-cols-4 items-center px-2">
           {TABS.map(({ key, label, icon: Icon }) => {
             const active = activeTab === key
             return (
@@ -132,7 +132,7 @@ export function Navigation() {
                   {key === 'activity' && <UnreadDot small />}
                 </span>
                 <span
-                  className={`text-[10.5px] font-medium ${active ? 'text-ink-900' : 'text-ink-400'}`}
+                  className={`text-[10.5px] font-medium ${active ? 'text-ink-900 font-semibold' : 'text-ink-400'}`}
                 >
                   {label}
                 </span>
@@ -171,7 +171,7 @@ export function Navigation() {
             ))}
           </div>
           <p className="mt-4 text-center text-xs text-ink-400">
-            Available balance{' '}
+            Available to spend:{' '}
             <span className="font-semibold text-ink-600">{hideBalance ? '••••' : inrFull(balance)}</span>
           </p>
         </div>

@@ -3,6 +3,7 @@ import { animate } from 'framer-motion'
 import { Eye, EyeOff, ShieldCheck } from 'lucide-react'
 import { TiltCard } from './TiltCard'
 import { inrFull } from '../utils/format'
+import { MicroContext } from './ui/MicroContext'
 
 export function BalanceCard({
   balance,
@@ -44,7 +45,14 @@ export function BalanceCard({
       <div className="relative p-5 sm:p-6">
         <div className="flex items-center justify-between">
           <div>
-            <p className="text-[13px] font-medium text-ink-200">Available balance</p>
+            <div className="flex items-center gap-1.5 text-[13px] font-medium text-ink-200">
+              <span>Available to spend</span>
+              <MicroContext
+                inline
+                term="Available to spend"
+                explanation="Money you can safely use right now. It reflects all settled deposits, transfers, and bill payments with no pending holds."
+              />
+            </div>
             <p className="mt-0.5 flex items-center gap-1.5 text-xs text-ink-400">
               <ShieldCheck size={12} className="text-pos-400" /> Insured · UPI enabled
             </p>
@@ -64,7 +72,7 @@ export function BalanceCard({
             className={`tnum font-display text-[34px] font-bold leading-none tracking-tight ${
               hideBalance ? 'tracking-widest' : ''
             }`}
-            aria-label={hideBalance ? 'Balance hidden' : `Available balance ${inrFull(balance)}`}
+            aria-label={hideBalance ? 'Balance hidden' : `Available to spend ${inrFull(balance)}`}
           >
             {hideBalance ? '₹ ••••••' : inrFull(display)}
           </p>
@@ -76,7 +84,7 @@ export function BalanceCard({
             <p className="tnum mt-0.5 text-sm font-semibold text-white">VAULT · 9021 4487</p>
           </div>
           <span className="rounded-lg bg-white/10 px-2.5 py-1 text-[11px] font-semibold tracking-wide text-ink-100">
-            VAULT
+            CONFIDENCE LAYER ACTIVE
           </span>
         </div>
       </div>

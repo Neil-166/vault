@@ -4,8 +4,9 @@ import { Avatar, Badge, Button, Card } from '../components/ui/primitives'
 import { CategoryIcon } from '../components/ui/CategoryIcon'
 import { ScreenHeader } from '../components/ScreenHeader'
 import { EmptyState } from '../components/ui/EmptyState'
+import { TransactionExplanation } from '../components/TransactionExplanation'
 import { useVault } from '../store/useVault'
-import { inr, longDate } from '../utils/format'
+import { inr, inrFull, longDate } from '../utils/format'
 
 export default function TransactionDetailScreen() {
   const tx = useVault((s) =>
@@ -19,11 +20,11 @@ export default function TransactionDetailScreen() {
   if (!tx) {
     return (
       <div className="-mx-4 -mt-5 min-h-screen bg-white lg:mx-0 lg:mt-0 lg:rounded-3xl lg:border lg:border-ink-100 lg:shadow-card">
-        <ScreenHeader title="Transaction" />
+        <ScreenHeader title="Payment details" />
         <EmptyState
           icon={<CategoryIcon category="Other" size={44} />}
-          title="Transaction not found"
-          body="It may have been removed or never existed."
+          title="Payment not found"
+          body="This payment record may have been removed or never existed."
           action={<Button onClick={() => go({ name: 'activity' })}>Back to activity</Button>}
         />
       </div>
@@ -41,9 +42,9 @@ export default function TransactionDetailScreen() {
 
   return (
     <div className="-mx-4 -mt-5 min-h-screen bg-white lg:mx-0 lg:mt-0 lg:rounded-3xl lg:border lg:border-ink-100 lg:shadow-card">
-      <ScreenHeader title="Transaction details" />
+      <ScreenHeader title="Payment details" subtitle="Understand this payment" />
 
-      <div className="mx-auto max-w-lg px-5 pb-12 pt-8">
+      <div className="mx-auto max-w-lg px-5 pb-12 pt-8 space-y-6">
         {/* Head */}
         <div className="flex flex-col items-center text-center">
           {isPerson ? (
@@ -71,25 +72,35 @@ export default function TransactionDetailScreen() {
             {isCredit ? '+' : '−'}
             {inr(tx.amount)}
           </p>
+          <p className="mt-1 text-xs font-semibold uppercase tracking-wider text-ink-400">
+            {isCredit ? 'Money in' : 'Money out'}
+          </p>
           <div className="mt-3">
             <StatusBadge status={tx.status} />
           </div>
         </div>
 
-        {/* Meta */}
-        <Card className="mt-7 divide-y divide-ink-100">
+        {/* Structured summary */}
+        <Card className="divide-y divide-ink-100 overflow-hidden shadow-card">
           <MetaRow label="Date & time" value={longDate(tx.date, tx.time)} />
           <MetaRow label="Payment method" value={tx.method} />
           <MetaRow label="Category" value={tx.category} />
-          <MetaRow label="Fee" value={tx.fee === 0 ? '₹0' : `₹${tx.fee}`} highlight={tx.fee === 0} />
-          <MetaRow label="Balance after" value={inr(tx.balanceAfter)} />
+          <MetaRow
+            label="Fee"
+            value={tx.fee === 0 ? '₹0 · No hidden fees' : `₹${tx.fee}`}
+            highlight={tx.fee === 0}
+          />
+          <MetaRow label="Available to spend after" value={inrFull(tx.balanceAfter)} />
           {tx.note && <MetaRow label="Note" value={tx.note} />}
         </Card>
 
+        {/* Narrative Explanation */}
+        <TransactionExplanation tx={tx} />
+
         {/* Tx ID */}
-        <Card className="mt-3 flex items-center justify-between p-4">
+        <Card className="flex items-center justify-between p-4 shadow-card">
           <div className="min-w-0">
-            <p className="text-xs font-medium uppercase tracking-wide text-ink-400">Transaction ID</p>
+            <p className="text-xs font-medium uppercase tracking-wide text-ink-400">Reference ID</p>
             <p className="tnum mt-0.5 truncate font-mono text-[13px] text-ink-800">{tx.id}</p>
           </div>
           <Button size="sm" variant="secondary" onClick={copyId}>
@@ -97,16 +108,8 @@ export default function TransactionDetailScreen() {
           </Button>
         </Card>
 
-        {/* Trust note */}
-        {isPerson && tx.type === 'debit' && (
-          <p className="mt-4 rounded-xl bg-cream-50 px-3.5 py-3 text-[13px] leading-relaxed text-ink-500">
-            Payment to a verified VAULT recipient. Fees are always shown before you confirm — this
-            transfer had none.
-          </p>
-        )}
-
         {/* Actions */}
-        <div className="mt-6 grid grid-cols-1 gap-2.5 sm:grid-cols-2">
+        <div className="pt-2 grid grid-cols-1 gap-2.5 sm:grid-cols-2">
           <Button size="lg" variant="secondary" onClick={() => go({ name: 'send' })}>
             <Repeat size={17} /> Repeat payment
           </Button>
@@ -120,9 +123,9 @@ export default function TransactionDetailScreen() {
 }
 
 function StatusBadge({ status }: { status: string }) {
-  if (status === 'Completed') return <Badge tone="success">Completed</Badge>
-  if (status === 'Pending') return <Badge tone="warn">Pending</Badge>
-  return <Badge tone="error">Failed</Badge>
+  if (status === 'Completed') return <Badge tone="success">Payment Completed</Badge>
+  if (status === 'Pending') return <Badge tone="warn">Payment Pending</Badge>
+  return <Badge tone="error">Payment Failed</Badge>
 }
 
 function MetaRow({ label, value, highlight }: { label: string; value: string; highlight?: boolean }) {

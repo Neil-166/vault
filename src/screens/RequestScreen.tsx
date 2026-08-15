@@ -5,8 +5,9 @@ import { Avatar, Button, Input } from '../components/ui/primitives'
 import { ScreenHeader } from '../components/ScreenHeader'
 import { StepProgress } from '../components/StepProgress'
 import { SuccessState } from '../components/SuccessState'
+import { FeeBreakdown } from '../components/ui/FeeBreakdown'
 import { CONTACTS, useVault } from '../store/useVault'
-import { inr } from '../utils/format'
+import { inr, inrFull } from '../utils/format'
 import type { Contact } from '../types'
 
 const STEPS = ['Recipient', 'Amount', 'Done']
@@ -28,7 +29,7 @@ export default function RequestScreen() {
   const amountError = amount <= 0 ? 'Enter an amount above ₹0.' : ''
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase()
-    const all = q ? CONTACTS.filter((c) => c.name.toLowerCase().includes(q)) : CONTACTS
+    const all = q ? CONTACTS.filter((c) => c.name.toLowerCase().includes(q) || c.upi.toLowerCase().includes(q)) : CONTACTS
     return [...all].sort((a, b) => Number(b.recent) - Number(a.recent))
   }, [query])
 
@@ -51,11 +52,11 @@ export default function RequestScreen() {
           {step === 0 && (
             <motion.div key="r0" initial={{ opacity: 0, x: 24 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -24 }} transition={{ duration: 0.22 }}>
               <h2 className="font-display text-xl font-bold text-ink-950">Who should pay you?</h2>
-              <p className="mt-1 text-sm text-ink-400">They’ll get a request they can pay in one tap.</p>
+              <p className="mt-1 text-sm text-ink-400">They’ll get a friendly request they can pay in one tap.</p>
 
               <div className="mt-5">
                 <Input
-                  placeholder="Search contacts"
+                  placeholder="Search contacts by name or UPI"
                   icon={<Search size={17} />}
                   value={query}
                   onChange={(e) => setQuery(e.target.value)}
@@ -77,6 +78,7 @@ export default function RequestScreen() {
                     <span className="w-full truncate text-center text-[12.5px] font-medium text-ink-800">
                       {c.name}
                     </span>
+                    <span className="truncate text-[10px] text-ink-400 max-w-full">{c.upi}</span>
                   </button>
                 ))}
               </div>
@@ -113,7 +115,7 @@ export default function RequestScreen() {
                 />
               </div>
               <p className="mt-1 text-center text-sm text-ink-400">
-                Requested from <span className="font-medium text-ink-700">{recipient.name}</span>
+                Requesting from <strong className="font-semibold text-ink-700">{recipient.name}</strong>
               </p>
 
               <div className="mt-5 flex flex-wrap justify-center gap-2">
@@ -132,11 +134,17 @@ export default function RequestScreen() {
 
               <Input
                 className="mt-6"
-                label="Reason (optional)"
-                placeholder="e.g. Dinner split"
+                label="Reason for request (optional)"
+                placeholder="e.g. Movie tickets, Coffee run"
                 value={note}
                 onChange={(e) => setNote(e.target.value)}
               />
+
+              {amount > 0 && (
+                <div className="mt-5">
+                  <FeeBreakdown amount={amount} fee={0} feeLabel="Request fee" totalLabel="Amount they will receive request for" />
+                </div>
+              )}
 
               {amountError && (
                 <p className="mt-3 rounded-xl bg-danger-50 px-3.5 py-2.5 text-sm font-medium text-danger-600">
@@ -158,15 +166,16 @@ export default function RequestScreen() {
                 subtitle={`${inr(amount)} requested from ${recipient.name}`}
                 meta={[
                   { label: 'Recipient', value: recipient.name },
-                  { label: 'Note', value: note || '—' },
-                  { label: 'Status', value: 'Waiting for payment' },
+                  { label: 'Reason', value: note || 'Payment request' },
+                  { label: 'Fee', value: '₹0 · Free' },
+                  { label: 'Payment status', value: 'Waiting for payment' },
                 ]}
               >
                 <Button size="lg" fullWidth variant="secondary" onClick={() => go({ name: 'home' })}>
                   Done
                 </Button>
                 <Button size="lg" fullWidth variant="ghost" onClick={() => go({ name: 'activity' })}>
-                  Track requests
+                  Track in activity
                 </Button>
               </SuccessState>
             </motion.div>
@@ -175,7 +184,7 @@ export default function RequestScreen() {
       </div>
 
       <p className="mx-auto max-w-lg px-5 pb-8 text-center text-xs text-ink-400">
-        Available balance <span className="tnum font-semibold text-ink-600">{inr(balance)}</span> · Requests don’t deduct money.
+        Available to spend: <span className="tnum font-semibold text-ink-600">{inrFull(balance)}</span> · Requesting money does not deduct funds.
       </p>
     </div>
   )
