@@ -46,11 +46,11 @@ export function ReviewSummary({
           {recipient.verified ? (
             <span className="inline-flex items-center gap-1 rounded-full bg-brand-50 px-2.5 py-1 text-xs font-medium text-brand-700">
               <BadgeCheck size={13} className="text-brand-600" />
-              Verified recipient
+              Saved contact
             </span>
           ) : (
             <span className="inline-flex items-center gap-1 rounded-full bg-ink-100 px-2.5 py-1 text-xs font-medium text-ink-600">
-              Unverified recipient
+              New contact
             </span>
           )}
           <span className="inline-flex items-center gap-1 rounded-full bg-pos-50 px-2.5 py-1 text-xs font-medium text-pos-700">

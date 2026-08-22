@@ -4,7 +4,6 @@ import {
   ArrowUpRight,
   Bell,
   BellRing,
-  CheckCircle2,
   ChevronRight,
   HandCoins,
   Scale,
@@ -74,7 +73,6 @@ export default function Dashboard() {
   const hideBalance = useVault((s) => s.hideBalance)
   const toggleHideBalance = useVault((s) => s.toggleHideBalance)
   const go = useVault((s) => s.go)
-  const openPayMenu = useVault((s) => s.openPayMenu)
   const transactions = useVault((s) => s.transactions)
   const goals = useVault((s) => s.goals)
   const bills = useVault((s) => s.bills)
@@ -129,20 +127,6 @@ export default function Dashboard() {
         </div>
       </header>
 
-      {/* Confidence Banner */}
-      <section className="animate-rise">
-        <div className="flex items-center justify-between gap-3 rounded-2xl border border-pos-200 bg-pos-50/80 px-4 py-3 text-xs text-pos-800 shadow-card">
-          <div className="flex items-center gap-2.5">
-            <CheckCircle2 size={16} className="shrink-0 text-pos-600" />
-            <span>
-              <strong className="font-semibold text-pos-900">You're all set.</strong> No unusual payments or hidden fees detected today.
-            </span>
-          </div>
-          <span className="hidden sm:inline-flex items-center gap-1 rounded-full bg-pos-100 px-2.5 py-0.5 text-[11px] font-semibold text-pos-700">
-            Protected
-          </span>
-        </div>
-      </section>
 
       {/* Balance card */}
       <section className="animate-rise" style={{ animationDelay: '40ms' }}>
@@ -302,20 +286,31 @@ export default function Dashboard() {
         </div>
 
         {/* One thing worth knowing card */}
-        <div className="mt-4 flex items-center justify-between rounded-xl bg-cream-50 p-3 border border-ink-100 text-xs text-ink-600">
-          <span>
-            <strong className="text-ink-900 font-semibold">One thing worth knowing:</strong>{' '}
-            {weekTotal <= prevWeek
-              ? `You're on track to spend ${inr(Math.abs(weekTotal - prevWeek))} less than last week.`
-              : `Your largest single payment was ${inr(Math.max(...transactions.slice(0, 5).filter(t => t.type === 'debit').map(t => t.amount)))}.`}
-          </span>
-          <button
-            onClick={() => go({ name: 'insights' })}
-            className="text-brand-600 font-semibold hover:underline shrink-0 ml-2"
-          >
-            Details
-          </button>
-        </div>
+        {(() => {
+          const recentDebits = transactions.slice(0, 5).filter(t => t.type === 'debit')
+          const largest = recentDebits.length > 0 ? Math.max(...recentDebits.map(t => t.amount)) : 0
+          const insight = weekTotal === 0
+            ? 'No spending this week yet.'
+            : weekTotal <= prevWeek && prevWeek > 0
+            ? `You're on track to spend ${inr(Math.abs(weekTotal - prevWeek))} less than last week.`
+            : largest > 0
+            ? `Your largest recent payment was ${inr(largest)}.`
+            : `${inr(weekTotal)} spent so far this week.`
+          return (
+            <div className="mt-4 flex items-center justify-between rounded-xl bg-cream-50 p-3 border border-ink-100 text-xs text-ink-600">
+              <span>
+                <strong className="text-ink-900 font-semibold">One thing worth knowing:</strong>{' '}
+                {insight}
+              </span>
+              <button
+                onClick={() => go({ name: 'insights' })}
+                className="text-brand-600 font-semibold hover:underline shrink-0 ml-2"
+              >
+                Details
+              </button>
+            </div>
+          )
+        })()}
       </section>
 
       {/* Recent transactions */}
@@ -379,15 +374,9 @@ export default function Dashboard() {
         </div>
       </section>
 
-      {/* Primary CTA */}
-      <section className="animate-rise pb-2 text-center" style={{ animationDelay: '280ms' }}>
-        <Button size="lg" onClick={openPayMenu} className="w-full sm:w-auto sm:px-10">
-          <Send size={17} /> Send money now
-        </Button>
-      </section>
 
       {/* Transaction detail sheet */}
-      <BottomSheet open={!!selectedTx} onClose={() => setSelectedTx(null)} title="Transaction details">
+      <BottomSheet open={!!selectedTx} onClose={() => setSelectedTx(null)} title="What happened">
         {selectedTx && <TransactionSheet tx={selectedTx} />}
       </BottomSheet>
     </div>

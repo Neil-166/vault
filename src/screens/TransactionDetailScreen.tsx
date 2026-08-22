@@ -21,7 +21,7 @@ export default function TransactionDetailScreen() {
   if (!tx) {
     return (
       <div className="-mx-4 -mt-5 min-h-screen bg-white lg:mx-0 lg:mt-0 lg:rounded-3xl lg:border lg:border-ink-100 lg:shadow-card">
-        <ScreenHeader title="Payment details" />
+        <ScreenHeader title="What happened" />
         <EmptyState
           icon={<CategoryIcon category="Other" size={44} />}
           title="Payment not found"
@@ -47,7 +47,7 @@ export default function TransactionDetailScreen() {
 
   return (
     <div className="-mx-4 -mt-5 min-h-screen bg-white lg:mx-0 lg:mt-0 lg:rounded-3xl lg:border lg:border-ink-100 lg:shadow-card">
-      <ScreenHeader title="Payment details" subtitle="Understand this payment" onBack={() => go({ name: 'activity' })} />
+      <ScreenHeader title="What happened" subtitle="Understand this payment" onBack={() => go({ name: 'activity' })} />
 
       <div className="mx-auto max-w-lg px-5 pb-12 pt-8 space-y-6">
         {/* Head */}

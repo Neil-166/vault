@@ -155,11 +155,11 @@ export default function ActivityScreen() {
       )}
 
       <p className="flex items-center justify-center gap-1.5 pt-2 text-xs text-ink-400">
-        <ShieldCheck size={14} className="text-pos-600" /> {transactions.length} verified records · Transparent fee breakdown on every payment
+        <ShieldCheck size={14} className="text-pos-600" /> {transactions.length} payments · Fee breakdown shown on every transaction
       </p>
 
       {/* Transaction detail sheet */}
-      <BottomSheet open={!!selectedTx} onClose={() => setSelectedTx(null)} title="Payment details">
+      <BottomSheet open={!!selectedTx} onClose={() => setSelectedTx(null)} title="What happened">
         {selectedTx && <TransactionSheet tx={selectedTx} />}
       </BottomSheet>
     </div>

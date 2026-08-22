@@ -15,7 +15,6 @@ import {
   ShieldCheck,
   UserRound,
   Wallet,
-  Zap,
 } from 'lucide-react'
 import { Avatar, Button, Input } from '../components/ui/primitives'
 import { Modal } from '../components/ui/Modal'
@@ -498,20 +497,20 @@ export default function SendScreen() {
                 />
               </div>
               <p className="mt-2 text-center text-[12px] font-medium text-ink-400">
-                {allChecksDone ? 'All safety checks passed ✓' : `Checking ${checksComplete} of 4 security points...`}
+                {allChecksDone ? 'Everything looks good. Ready to send.' : `Reviewing your payment · ${checksComplete} of 4 done`}
               </p>
 
               {/* Sequential checks */}
               <div className="mt-4 space-y-2">
                 <VerifyCheck
                   status={checks[0]}
-                  label="Recipient verification"
-                  detail={recipient.verified ? 'Payment identity matched & verified' : 'Payment identity registered'}
+                  label="Recipient details"
+                  detail={recipient.verified ? 'Saved contact · in your contact list' : 'Contact details recorded'}
                 />
                 <VerifyCheck
                   status={checks[1]}
                   label="Transfer history"
-                  detail={hasPreviousPayment ? "You've successfully paid this person before" : 'First payment to this recipient — details checked'}
+                  detail={hasPreviousPayment ? "You've successfully paid this person before" : 'First payment to this recipient — details confirmed'}
                 />
                 <VerifyCheck
                   status={checks[2]}
@@ -521,7 +520,7 @@ export default function SendScreen() {
                 <VerifyCheck
                   status={checks[3]}
                   label="Available balance"
-                  detail={`${inrFull(balance)} available to spend · ${inrFull(balanceAfter)} remaining`}
+                  detail={`${inrFull(balance)} available · ${inrFull(balanceAfter)} will remain after`}
                 />
               </div>
 
@@ -533,7 +532,7 @@ export default function SendScreen() {
               >
                 <span className="flex items-center gap-1.5 font-medium">
                   <HelpCircle size={14} className="text-brand-600" />
-                  What did VAULT verify?
+                  What did VAULT check?
                 </span>
                 <ChevronDown
                   size={16}
@@ -551,19 +550,19 @@ export default function SendScreen() {
                   >
                     <div className="rounded-b-xl border border-t-0 border-ink-100 bg-white px-4 pb-3.5 text-[13px] leading-relaxed text-ink-500 space-y-2">
                       <p>
-                        <span className="font-semibold text-ink-700">Recipient</span> — Identity and UPI routing verified.
+                        <span className="font-semibold text-ink-700">Recipient</span> — Your contact list was checked for this person.
                       </p>
                       <p>
                         <span className="font-semibold text-ink-700">History</span> —{' '}
                         {hasPreviousPayment
-                          ? 'You previously completed transfers with this recipient.'
-                          : 'First transfer to this recipient with full details verified.'}
+                          ? 'You have previously sent money to this person.'
+                          : 'This is your first transfer to this recipient.'}
                       </p>
                       <p>
-                        <span className="font-semibold text-ink-700">Fees</span> — Zero platform fee or hidden surcharge.
+                        <span className="font-semibold text-ink-700">Fees</span> — No platform fee or hidden surcharge on this transfer.
                       </p>
                       <p>
-                        <span className="font-semibold text-ink-700">Balance</span> — Sufficient funds available for immediate execution.
+                        <span className="font-semibold text-ink-700">Balance</span> — Your available balance covers the full amount.
                       </p>
                     </div>
                   </motion.div>
@@ -582,10 +581,10 @@ export default function SendScreen() {
                       className="space-y-2.5"
                     >
                       <p className="mb-2 text-sm font-medium text-pos-700 flex items-center justify-center gap-1">
-                        <Check size={16} /> Everything looks clear. Ready to send.
+                        <Check size={16} /> Everything looks good. Ready to send.
                       </p>
                       <Button size="lg" fullWidth onClick={() => setStep(4)}>
-                        <Zap size={18} /> Send {inr(amount)} now
+                        <ArrowRight size={18} /> Continue to confirm
                       </Button>
                       <Button size="lg" fullWidth variant="ghost" onClick={() => setStep(2)}>
                         Back to review
@@ -647,7 +646,7 @@ export default function SendScreen() {
               {!sendError && (
                 <div className="mt-8 w-full max-w-xs space-y-2.5">
                   <Button size="lg" fullWidth onClick={handleConfirm}>
-                    <Zap size={18} /> Confirm and send {inr(amount)}
+                    <Check size={18} /> Confirm and send {inr(amount)}
                   </Button>
                   <Button size="lg" fullWidth variant="ghost" onClick={() => setStep(3)}>
                     Go back
@@ -676,7 +675,7 @@ export default function SendScreen() {
                   { label: 'Arrival', value: 'Instant' },
                   { label: 'Reference ID', value: sentTx.id },
                   { label: 'Date & time', value: `${sentTx.date} · ${sentTx.time}` },
-                  { label: 'Status', value: 'Completed · Verified' },
+                  { label: 'Status', value: 'Completed' },
                 ]}
               >
                 <Button

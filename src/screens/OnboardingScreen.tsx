@@ -59,7 +59,7 @@ export default function OnboardingScreen({ onComplete }: { onComplete: () => voi
                 Know what happens before you pay.
               </h2>
               <p className="mt-2 text-[15px] leading-relaxed" style={{ color: 'var(--vault-text-secondary)' }}>
-                See verified recipient identity, transparent ₹0 fees, and your exact balance after before confirming any movement.
+                See recipient details, transparent ₹0 fees, and your exact balance after — before confirming any movement of money.
               </p>
               <div className="mt-6 space-y-2.5 text-left">
                 <div className="flex items-center gap-3 rounded-xl border p-3" style={{ borderColor: 'var(--vault-border)', backgroundColor: 'var(--vault-surface)' }}>

@@ -68,7 +68,7 @@ export default function SecurityScreen() {
             icon={<Fingerprint size={18} />}
             label="Verify your identity"
             value="KYC done"
-            onClick={() => pushToast({ tone: 'success', title: 'Identity verified', body: 'Your KYC is up to date on this account.' })}
+            onClick={() => pushToast({ tone: 'info', title: 'Identity status', body: 'KYC details are simulated in this prototype.' })}
           />
           <MenuRow
             icon={<KeyRound size={18} />}
