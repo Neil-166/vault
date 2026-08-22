@@ -313,30 +313,8 @@ export default function Dashboard() {
         })()}
       </section>
 
-      {/* Recent transactions */}
-      <section className="animate-rise" style={{ animationDelay: '200ms' }}>
-        <div className="mb-2 flex items-center justify-between">
-          <h2 className="font-display text-[15px] font-semibold text-ink-900">Recent activity</h2>
-          <button
-            onClick={() => go({ name: 'activity' })}
-            className="flex items-center gap-0.5 text-[13px] font-medium text-brand-600 hover:text-brand-700"
-          >
-            See all <ArrowUpRight size={14} />
-          </button>
-        </div>
-        <Card className="divide-y divide-ink-100 px-2 py-1">
-          {transactions.slice(0, 5).map((tx) => (
-            <TransactionItem
-              key={tx.id}
-              tx={tx}
-              onClick={() => setSelectedTx(tx)}
-            />
-          ))}
-        </Card>
-      </section>
-
       {/* Savings goals */}
-      <section className="animate-rise" style={{ animationDelay: '240ms' }}>
+      <section className="animate-rise" style={{ animationDelay: '200ms' }}>
         <div className="mb-2 flex items-center justify-between">
           <h2 className="font-display text-[15px] font-semibold text-ink-900">Savings goals</h2>
           <button
@@ -372,6 +350,28 @@ export default function Dashboard() {
             )
           })}
         </div>
+      </section>
+
+      {/* Recent activity */}
+      <section className="animate-rise" style={{ animationDelay: '240ms' }}>
+        <div className="mb-2 flex items-center justify-between">
+          <h2 className="font-display text-[15px] font-semibold text-ink-900">Recent activity</h2>
+          <button
+            onClick={() => go({ name: 'activity' })}
+            className="flex items-center gap-0.5 text-[13px] font-medium text-brand-600 hover:text-brand-700"
+          >
+            See all <ArrowUpRight size={14} />
+          </button>
+        </div>
+        <Card className="divide-y divide-ink-100 px-2 py-1">
+          {transactions.slice(0, 5).map((tx) => (
+            <TransactionItem
+              key={tx.id}
+              tx={tx}
+              onClick={() => setSelectedTx(tx)}
+            />
+          ))}
+        </Card>
       </section>
 
 

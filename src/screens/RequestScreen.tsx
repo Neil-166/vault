@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
-import { ArrowRight, BadgeCheck, Search } from 'lucide-react'
+import { ArrowRight, BadgeCheck, Loader2, Search } from 'lucide-react'
 import { Avatar, Button, Input } from '../components/ui/primitives'
 import { ScreenHeader } from '../components/ScreenHeader'
 import { StepProgress } from '../components/StepProgress'
@@ -24,6 +24,7 @@ export default function RequestScreen() {
   const [amountStr, setAmountStr] = useState('')
   const [note, setNote] = useState('')
   const [query, setQuery] = useState('')
+  const [isSubmitting, setIsSubmitting] = useState(false)
 
   const amount = parseFloat(amountStr) || 0
   const amountError = amount <= 0 ? 'Enter an amount above ₹0.' : ''
@@ -34,9 +35,13 @@ export default function RequestScreen() {
   }, [query])
 
   const handleSend = () => {
-    if (!recipient || amount <= 0) return
-    requestMoney(recipient, amount, note || undefined)
-    setStep(2)
+    if (!recipient || amount <= 0 || isSubmitting) return
+    setIsSubmitting(true)
+    setTimeout(() => {
+      requestMoney(recipient, amount, note || undefined)
+      setIsSubmitting(false)
+      setStep(2)
+    }, 350)
   }
 
   return (
@@ -152,8 +157,16 @@ export default function RequestScreen() {
                 </p>
               )}
 
-              <Button size="lg" fullWidth className="mt-6" onClick={handleSend} disabled={!!amountError || amount <= 0}>
-                Send request <ArrowRight size={17} />
+              <Button size="lg" fullWidth className="mt-6" onClick={handleSend} disabled={!!amountError || amount <= 0 || isSubmitting}>
+                {isSubmitting ? (
+                  <>
+                    <Loader2 size={17} className="animate-spin" /> Sending request...
+                  </>
+                ) : (
+                  <>
+                    Send request <ArrowRight size={17} />
+                  </>
+                )}
               </Button>
             </motion.div>
           )}

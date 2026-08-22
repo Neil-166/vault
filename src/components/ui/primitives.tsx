@@ -229,7 +229,7 @@ export function Avatar({
         <span
           className="absolute -bottom-0.5 -right-0.5 flex items-center justify-center rounded-full bg-brand-600 text-white"
           style={{ width: size * 0.38, height: size * 0.38 }}
-          title="Verified recipient"
+          title="Saved contact"
         >
           <svg width={size * 0.26} height={size * 0.26} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
             <path d="M20 6 9 17l-5-5" />

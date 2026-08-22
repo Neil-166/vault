@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
-import { ArrowDownToLine, Landmark, ShieldCheck } from 'lucide-react'
+import { ArrowDownToLine, Landmark, Loader2, ShieldCheck } from 'lucide-react'
 import { Button } from '../components/ui/primitives'
 import { ScreenHeader } from '../components/ScreenHeader'
 import { SuccessState } from '../components/SuccessState'
@@ -24,14 +24,19 @@ export default function AddMoneyScreen() {
   const [amountStr, setAmountStr] = useState('')
   const [bank, setBank] = useState(BANKS[0])
   const [done, setDone] = useState(false)
+  const [isSubmitting, setIsSubmitting] = useState(false)
 
   const amount = parseFloat(amountStr) || 0
   const error = amount <= 0 ? 'Enter an amount above ₹0.' : ''
 
   const handleAdd = () => {
-    if (amount <= 0) return
-    addMoney(amount)
-    setDone(true)
+    if (amount <= 0 || isSubmitting) return
+    setIsSubmitting(true)
+    setTimeout(() => {
+      addMoney(amount)
+      setIsSubmitting(false)
+      setDone(true)
+    }, 350)
   }
 
   return (
@@ -119,8 +124,16 @@ export default function AddMoneyScreen() {
 
               {error && <p className="mt-3 rounded-xl bg-danger-50 px-3.5 py-2.5 text-sm font-medium text-danger-600">{error}</p>}
 
-              <Button size="lg" fullWidth className="mt-6" onClick={handleAdd} disabled={amount <= 0}>
-                <ArrowDownToLine size={17} /> Add {amount > 0 ? inr(amount) : 'money'} now
+              <Button size="lg" fullWidth className="mt-6" onClick={handleAdd} disabled={amount <= 0 || isSubmitting}>
+                {isSubmitting ? (
+                  <>
+                    <Loader2 size={17} className="animate-spin" /> Adding {amount > 0 ? inr(amount) : 'funds'}...
+                  </>
+                ) : (
+                  <>
+                    <ArrowDownToLine size={17} /> Add {amount > 0 ? inr(amount) : 'money'} now
+                  </>
+                )}
               </Button>
             </motion.div>
           ) : (

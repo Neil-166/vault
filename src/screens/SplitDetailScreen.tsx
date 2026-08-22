@@ -242,7 +242,7 @@ export default function SplitDetailScreen() {
         )}
 
         <p className="text-center text-xs text-ink-400">
-          Created by {bill.createdByName} · Tracked with VAULT Confidence Layer
+          Created by {bill.createdByName} · Zero fee split tracking
         </p>
       </div>
     </div>

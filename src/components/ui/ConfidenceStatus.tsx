@@ -1,4 +1,4 @@
-import { ShieldCheck, AlertCircle, CheckCircle2, Clock, Info, ShieldAlert, Sparkles } from 'lucide-react'
+import { ShieldCheck, AlertCircle, CheckCircle2, Clock, Info, ShieldAlert } from 'lucide-react'
 
 export type ConfidenceState =
   | 'clear'
@@ -79,16 +79,16 @@ const STATUS_CONFIG: Record<
   },
   verified: {
     icon: ShieldCheck,
-    label: 'Verified recipient',
-    detail: 'Payment identity matched and active',
+    label: 'Saved contact',
+    detail: 'In your contact list',
     badgeClass: 'bg-brand-50 border-brand-200 text-brand-800',
     textClass: 'text-brand-700',
     dotColor: 'bg-brand-500',
   },
   insured: {
-    icon: Sparkles,
-    label: 'Insured & protected',
-    detail: 'Covered under banking safety protocols',
+    icon: ShieldCheck,
+    label: 'Transparent payment',
+    detail: 'Zero fee on standard transactions',
     badgeClass: 'bg-pos-50 border-pos-200 text-pos-800',
     textClass: 'text-pos-700',
     dotColor: 'bg-pos-500',

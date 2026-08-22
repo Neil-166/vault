@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
-import { ArrowRight, Check, Plus, ShieldCheck, UserPlus, X } from 'lucide-react'
+import { ArrowRight, Check, Loader2, Plus, ShieldCheck, UserPlus, X } from 'lucide-react'
 import { Avatar, Button, Chip, Input } from '../components/ui/primitives'
 import { BottomSheet } from '../components/ui/BottomSheet'
 import { ScreenHeader } from '../components/ScreenHeader'
@@ -70,6 +70,7 @@ export default function SplitScreen() {
   const [itemAmount, setItemAmount] = useState('')
   const [itemPeople, setItemPeople] = useState<string[]>([])
   const [newBillId, setNewBillId] = useState('')
+  const [isSubmitting, setIsSubmitting] = useState(false)
 
   const total = parseFloat(totalStr) || 0
   const others = people.filter((p) => !p.isYou)
@@ -134,25 +135,30 @@ export default function SplitScreen() {
   }
 
   const handleSend = () => {
+    if (isSubmitting) return
     if (mode === 'custom' && !customOk) return
     if (mode === 'item' && !itemOk) return
-    const participants = people.map((p, i) => ({
-      name: p.name,
-      initials: p.initials,
-      hue: p.hue,
-      amount: Math.round(amountFor(p, i) * 100) / 100,
-      paid: !!p.isYou,
-    }))
-    const id = createBill({
-      title: title.trim(),
-      merchant: 'Split with friends',
-      total: Math.round(total * 100) / 100,
-      splitMode: mode,
-      participants,
-    })
-    setNewBillId(id)
-    pushToast({ tone: 'success', title: 'Requests sent', body: `${others.length} friend${others.length === 1 ? '' : 's'} notified with their calculated share.` })
-    setStep(3)
+    setIsSubmitting(true)
+    setTimeout(() => {
+      const participants = people.map((p, i) => ({
+        name: p.name,
+        initials: p.initials,
+        hue: p.hue,
+        amount: Math.round(amountFor(p, i) * 100) / 100,
+        paid: !!p.isYou,
+      }))
+      const id = createBill({
+        title: title.trim(),
+        merchant: 'Split with friends',
+        total: Math.round(total * 100) / 100,
+        splitMode: mode,
+        participants,
+      })
+      setIsSubmitting(false)
+      setNewBillId(id)
+      pushToast({ tone: 'success', title: 'Requests sent', body: `${others.length} friend${others.length === 1 ? '' : 's'} notified with their calculated share.` })
+      setStep(3)
+    }, 350)
   }
 
   return (
@@ -361,8 +367,20 @@ export default function SplitScreen() {
               </div>
 
               <div className="pt-2 space-y-2.5">
-                <Button size="lg" fullWidth onClick={handleSend}><Check size={18} /> Create split & send requests ({inr(total)})</Button>
-                <Button size="lg" fullWidth variant="ghost" onClick={() => setStep(1)}>Edit participants</Button>
+                <Button size="lg" fullWidth onClick={handleSend} disabled={isSubmitting}>
+                  {isSubmitting ? (
+                    <>
+                      <Loader2 size={18} className="animate-spin" /> Creating split & sending requests...
+                    </>
+                  ) : (
+                    <>
+                      <Check size={18} /> Create split & send requests ({inr(total)})
+                    </>
+                  )}
+                </Button>
+                <Button size="lg" fullWidth variant="ghost" onClick={() => setStep(1)} disabled={isSubmitting}>
+                  Edit participants
+                </Button>
               </div>
             </motion.div>
           )}

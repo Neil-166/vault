@@ -36,7 +36,7 @@ export function TransactionExplanation({ tx, className = '' }: TransactionExplan
 
   const generateWhyAppears = () => {
     if (tx.status === 'Completed') {
-      return `This record appears because an electronic payment was verified and settled. Your balance changed from ${inrFull(
+      return `This record appears because this payment was completed and settled. Your balance changed from ${inrFull(
         isCredit ? tx.balanceAfter - tx.amount : tx.balanceAfter + tx.amount + tx.fee,
       )} to ${inrFull(tx.balanceAfter)}.`
     }

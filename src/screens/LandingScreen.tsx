@@ -6,7 +6,7 @@ const PILLARS = [
     step: '01',
     icon: ShieldCheck,
     title: 'Know Before You Send',
-    desc: 'Transparent amounts, verified recipients, zero hidden fees, and instant arrival checks before money moves.',
+    desc: 'Transparent amounts, saved contact checks, zero hidden fees, and instant balance impact before money moves.',
     hue: 152,
   },
   {

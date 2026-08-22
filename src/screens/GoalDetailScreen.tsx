@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { motion } from 'framer-motion'
-import { Check, PiggyBank, Plus, Trash2, Zap } from 'lucide-react'
+import { Check, Loader2, PiggyBank, Plus, Trash2 } from 'lucide-react'
 import { Button, Card } from '../components/ui/primitives'
 import { Modal } from '../components/ui/Modal'
 import { ConfirmationDialog } from '../components/ui/ConfirmationDialog'
@@ -23,6 +23,7 @@ export default function GoalDetailScreen() {
 
   const [addOpen, setAddOpen] = useState(false)
   const [amountStr, setAmountStr] = useState('')
+  const [isSubmitting, setIsSubmitting] = useState(false)
   const [confirmDelete, setConfirmDelete] = useState(false)
 
   if (!goal) {
@@ -54,19 +55,23 @@ export default function GoalDetailScreen() {
   const contributions = transactions.filter((t) => t.category === 'Savings' && t.merchant === goal.name)
 
   const handleAdd = () => {
-    if (amount <= 0) return
-    const res = addToGoal(goal.id, amount)
-    if (!res.ok) {
-      pushToast({ tone: 'error', title: "Couldn't add money", body: res.error })
-      return
-    }
-    setAddOpen(false)
-    setAmountStr('')
-    pushToast({
-      tone: 'success',
-      title: 'Added to savings goal',
-      body: `${inr(amount)} safely allocated to ${goal.name}.`,
-    })
+    if (amount <= 0 || amount > balance || isSubmitting) return
+    setIsSubmitting(true)
+    setTimeout(() => {
+      const res = addToGoal(goal.id, amount)
+      setIsSubmitting(false)
+      if (!res.ok) {
+        pushToast({ tone: 'error', title: "Couldn't add money", body: res.error })
+        return
+      }
+      setAddOpen(false)
+      setAmountStr('')
+      pushToast({
+        tone: 'success',
+        title: 'Added to savings goal',
+        body: `${inr(amount)} safely allocated to ${goal.name}.`,
+      })
+    }, 350)
   }
 
   return (
@@ -206,8 +211,16 @@ export default function GoalDetailScreen() {
         onClose={() => setAddOpen(false)}
         title={`Add money to ${goal.name}`}
         footer={
-          <Button size="lg" fullWidth onClick={handleAdd} disabled={amount <= 0 || amount > balance}>
-            <Zap size={17} /> Move {amount > 0 ? inr(amount) : ''} to goal
+          <Button size="lg" fullWidth onClick={handleAdd} disabled={amount <= 0 || amount > balance || isSubmitting}>
+            {isSubmitting ? (
+              <>
+                <Loader2 size={17} className="animate-spin" /> Moving {inr(amount)} to goal...
+              </>
+            ) : (
+              <>
+                <Check size={17} /> Move {amount > 0 ? inr(amount) : ''} to goal
+              </>
+            )}
           </Button>
         }
       >
@@ -226,6 +239,10 @@ export default function GoalDetailScreen() {
             />
           </div>
 
+          <p className="tnum text-xs text-ink-400">
+            Available to spend: <strong className="text-ink-700 font-semibold">{inrFull(balance)}</strong>
+          </p>
+
           <div className="flex gap-2">
             {[1000, 2500, 5000].map((q) => (
               <button
@@ -242,7 +259,14 @@ export default function GoalDetailScreen() {
             ))}
           </div>
 
-          {amount > 0 && (
+          {amount > balance && (
+            <div className="w-full rounded-xl border border-danger-200 bg-danger-50 p-3 text-xs text-danger-800">
+              <p className="font-semibold">This amount is larger than your available balance</p>
+              <p className="mt-0.5 text-danger-700">You have {inrFull(balance)} available to allocate.</p>
+            </div>
+          )}
+
+          {amount > 0 && amount <= balance && (
             <div className="w-full">
               <MoneyImpactPreview
                 currentBalance={balance}

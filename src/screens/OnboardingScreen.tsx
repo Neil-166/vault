@@ -3,6 +3,8 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { ArrowRight, Check, Eye, ShieldCheck } from 'lucide-react'
 import { Button } from '../components/ui/primitives'
 import { USER } from '../store/useVault'
+import { inrFull } from '../utils/format'
+import { STARTING_BALANCE } from '../data/mock'
 
 export default function OnboardingScreen({ onComplete }: { onComplete: () => void }) {
   const [step, setStep] = useState(0)
@@ -91,7 +93,7 @@ export default function OnboardingScreen({ onComplete }: { onComplete: () => voi
                 Make decisions with confidence.
               </h2>
               <p className="mt-2 text-[15px] leading-relaxed" style={{ color: 'var(--vault-text-secondary)' }}>
-                Your VAULT demo account is ready with linked accounts, pre-verified contacts, and smart transaction history.
+                Your VAULT demo account is ready with your contact list, sample goals, and transaction history.
               </p>
               <div className="mt-6 rounded-2xl border p-4 text-left shadow-xs" style={{ borderColor: 'var(--vault-border)', backgroundColor: 'var(--vault-surface)' }}>
                 <div className="flex items-center justify-between py-1.5">
@@ -103,8 +105,8 @@ export default function OnboardingScreen({ onComplete }: { onComplete: () => voi
                   <span className="tnum text-sm font-semibold" style={{ color: 'var(--vault-text)' }}>{USER.upi}</span>
                 </div>
                 <div className="flex items-center justify-between py-1.5 border-t" style={{ borderColor: 'var(--vault-border)' }}>
-                  <span className="text-sm" style={{ color: 'var(--vault-text-secondary)' }}>Confidence Layer</span>
-                  <span className="text-xs font-bold text-pos-600">ACTIVE · PROTECTED</span>
+                  <span className="text-sm" style={{ color: 'var(--vault-text-secondary)' }}>Starting Balance</span>
+                  <span className="tnum text-sm font-semibold text-brand-600">{inrFull(STARTING_BALANCE)}</span>
                 </div>
               </div>
               <Button size="lg" fullWidth className="mt-6" onClick={onComplete}>

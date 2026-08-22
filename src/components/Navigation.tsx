@@ -29,7 +29,7 @@ const TABS: { key: Tab; label: string; icon: typeof House }[] = [
 ]
 
 const PAY_ACTIONS: { route: Route; icon: typeof Send; title: string; desc: string }[] = [
-  { route: { name: 'send' }, icon: Send, title: 'Send money', desc: 'Pay a verified contact with zero fees' },
+  { route: { name: 'send' }, icon: Send, title: 'Send money', desc: 'Send money instantly with zero fees' },
   { route: { name: 'request' }, icon: HandCoins, title: 'Request money', desc: 'Ask someone for a friendly payment' },
   { route: { name: 'split' }, icon: Scale, title: 'Start a split', desc: 'Divide an expense fairly with friends' },
   { route: { name: 'addMoney' }, icon: ArrowDownToLine, title: 'Add money', desc: 'Top up instantly from your linked bank' },

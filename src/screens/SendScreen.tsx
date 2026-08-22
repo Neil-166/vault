@@ -53,6 +53,7 @@ export default function SendScreen() {
   const [checks, setChecks] = useState<CheckStatus[]>(['idle', 'idle', 'idle', 'idle'])
   const [allChecksDone, setAllChecksDone] = useState(false)
   const [sendError, setSendError] = useState<string | null>(null)
+  const [isSubmitting, setIsSubmitting] = useState(false)
 
   const amount = parseFloat(amountStr) || 0
   const fee = 0
@@ -111,15 +112,19 @@ export default function SendScreen() {
   }
 
   const handleConfirm = () => {
-    if (!recipient) return
+    if (!recipient || isSubmitting) return
+    setIsSubmitting(true)
     setSendError(null)
-    const res = sendMoney(recipient, amount, note || undefined)
-    if (!res.ok) {
-      setSendError(res.error ?? "We couldn't complete the payment. Your money was not moved.")
-      return
-    }
-    setSentTx(res.tx ?? null)
-    setStep(5)
+    setTimeout(() => {
+      const res = sendMoney(recipient, amount, note || undefined)
+      setIsSubmitting(false)
+      if (!res.ok) {
+        setSendError(res.error ?? "We couldn't complete the payment. Your money was not moved.")
+        return
+      }
+      setSentTx(res.tx ?? null)
+      setStep(5)
+    }, 380)
   }
 
   const addUpiContact = () => {
@@ -645,10 +650,18 @@ export default function SendScreen() {
 
               {!sendError && (
                 <div className="mt-8 w-full max-w-xs space-y-2.5">
-                  <Button size="lg" fullWidth onClick={handleConfirm}>
-                    <Check size={18} /> Confirm and send {inr(amount)}
+                  <Button size="lg" fullWidth onClick={handleConfirm} disabled={isSubmitting}>
+                    {isSubmitting ? (
+                      <>
+                        <Loader2 size={18} className="animate-spin" /> Sending {inr(amount)}...
+                      </>
+                    ) : (
+                      <>
+                        <Check size={18} /> Confirm and send {inr(amount)}
+                      </>
+                    )}
                   </Button>
-                  <Button size="lg" fullWidth variant="ghost" onClick={() => setStep(3)}>
+                  <Button size="lg" fullWidth variant="ghost" onClick={() => setStep(3)} disabled={isSubmitting}>
                     Go back
                   </Button>
                 </div>
