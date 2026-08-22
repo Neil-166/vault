@@ -1,9 +1,10 @@
 import { useEffect, useState } from 'react'
 import { animate } from 'framer-motion'
-import { Eye, EyeOff, ShieldCheck } from 'lucide-react'
+import { Eye, EyeOff, ShieldCheck, Lock, Clock, Sparkles } from 'lucide-react'
 import { TiltCard } from './TiltCard'
-import { inrFull } from '../utils/format'
+import { inr, inrFull } from '../utils/format'
 import { MicroContext } from './ui/MicroContext'
+import { useVault } from '../store/useVault'
 
 export function BalanceCard({
   balance,
@@ -15,6 +16,9 @@ export function BalanceCard({
   onToggleHide: () => void
 }) {
   const [display, setDisplay] = useState(balance)
+  const goals = useVault((s) => s.goals)
+  const totalReservedInGoals = goals.reduce((sum, g) => sum + g.saved, 0)
+  const pendingHolds = 0
 
   useEffect(() => {
     const controls = animate(0, balance, {
@@ -50,7 +54,7 @@ export function BalanceCard({
               <MicroContext
                 inline
                 term="Available to spend"
-                explanation="Money you can safely use right now. It reflects all settled deposits, transfers, and bill payments with no pending holds."
+                explanation="Money you can safely use right now. It reflects all settled deposits, transfers, and bill payments with zero pending holds."
               />
             </div>
             <p className="mt-0.5 flex items-center gap-1.5 text-xs text-ink-400">
@@ -78,16 +82,37 @@ export function BalanceCard({
           </p>
         </div>
 
-        <div className="mt-6 flex items-end justify-between border-t border-white/10 pt-4">
+        {/* Clear differentiation sub-bar: Available vs Reserved vs Pending */}
+        <div className="mt-4 grid grid-cols-2 gap-2 rounded-2xl bg-white/5 p-3 border border-white/5 text-xs">
+          <div>
+            <span className="text-ink-400 flex items-center gap-1">
+              <Lock size={11} className="text-brand-300" /> Reserved in goals
+            </span>
+            <p className="tnum font-semibold text-ink-100 mt-0.5">
+              {hideBalance ? '••••' : inr(totalReservedInGoals)}
+            </p>
+          </div>
+          <div>
+            <span className="text-ink-400 flex items-center gap-1">
+              <Clock size={11} className="text-pos-300" /> Pending holds
+            </span>
+            <p className="tnum font-semibold text-pos-300 mt-0.5">
+              {hideBalance ? '••••' : inr(pendingHolds)}
+            </p>
+          </div>
+        </div>
+
+        <div className="mt-4 flex items-end justify-between border-t border-white/10 pt-4">
           <div>
             <p className="text-xs text-ink-400">Savings account</p>
             <p className="tnum mt-0.5 text-sm font-semibold text-white">VAULT · 9021 4487</p>
           </div>
-          <span className="rounded-lg bg-white/10 px-2.5 py-1 text-[11px] font-semibold tracking-wide text-ink-100">
-            CONFIDENCE LAYER ACTIVE
+          <span className="inline-flex items-center gap-1 rounded-lg bg-white/10 px-2.5 py-1 text-[11px] font-semibold tracking-wide text-ink-100">
+            <Sparkles size={11} className="text-brand-300" /> CONFIDENCE LAYER ACTIVE
           </span>
         </div>
       </div>
     </TiltCard>
   )
 }
+

@@ -1,19 +1,11 @@
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { ArrowRight, Check, Landmark, ShieldCheck, Wallet } from 'lucide-react'
+import { ArrowRight, Check, Eye, ShieldCheck } from 'lucide-react'
 import { Button } from '../components/ui/primitives'
 import { USER } from '../store/useVault'
 
-const BANKS = [
-  { id: 'hdfc', name: 'HDFC Bank', color: '#004b8d' },
-  { id: 'sbi', name: 'State Bank of India', color: '#223f8f' },
-  { id: 'icici', name: 'ICICI Bank', color: '#f37c21' },
-  { id: 'axis', name: 'Axis Bank', color: '#97144d' },
-]
-
 export default function OnboardingScreen({ onComplete }: { onComplete: () => void }) {
   const [step, setStep] = useState(0)
-  const [selectedBank, setSelectedBank] = useState(BANKS[0])
 
   return (
     <div className="relative min-h-screen flex items-center justify-center px-6" style={{ background: 'var(--vault-bg)' }}>
@@ -25,78 +17,99 @@ export default function OnboardingScreen({ onComplete }: { onComplete: () => voi
 
       <div className="relative w-full max-w-md">
         <AnimatePresence mode="wait">
-          {/* Step 0: Welcome */}
+          {/* Step 0: Value Pillar 1 — Know where your money goes */}
           {step === 0 && (
-            <motion.div key="w0" initial={{ opacity: 0, x: 40 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -40 }} transition={{ duration: 0.3 }} className="text-center">
-              <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-brand-500 to-brand-700 shadow-lift">
+            <motion.div key="w0" initial={{ opacity: 0, x: 40 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -40 }} transition={{ duration: 0.28 }} className="text-center">
+              <div className="mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-brand-500 to-brand-700 shadow-lift">
+                <Eye size={30} className="text-white" />
+              </div>
+              <span className="inline-flex items-center gap-1.5 rounded-full border border-brand-200 bg-brand-50 px-3 py-0.5 text-xs font-semibold text-brand-700">
+                01 · Clarity First
+              </span>
+              <h1 className="mt-3 font-display text-2xl font-bold" style={{ color: 'var(--vault-text)' }}>
+                Know where your money goes.
+              </h1>
+              <p className="mt-2 text-[15px] leading-relaxed" style={{ color: 'var(--vault-text-secondary)' }}>
+                Clear available balances, real-time spending breakdowns, and plain human explanations. No confusing banking jargon.
+              </p>
+              <div className="mt-6 space-y-2.5 text-left">
+                <div className="flex items-center gap-3 rounded-xl border p-3" style={{ borderColor: 'var(--vault-border)', backgroundColor: 'var(--vault-surface)' }}>
+                  <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-pos-50 text-pos-600 font-bold text-xs">✓</span>
+                  <span className="text-sm font-medium" style={{ color: 'var(--vault-text)' }}>"Available to spend" separated from reserved funds</span>
+                </div>
+                <div className="flex items-center gap-3 rounded-xl border p-3" style={{ borderColor: 'var(--vault-border)', backgroundColor: 'var(--vault-surface)' }}>
+                  <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-brand-50 text-brand-600 font-bold text-xs">✓</span>
+                  <span className="text-sm font-medium" style={{ color: 'var(--vault-text)' }}>Plain-English narratives on every transaction</span>
+                </div>
+              </div>
+              <Button size="lg" fullWidth className="mt-7" onClick={() => setStep(1)}>Next <ArrowRight size={17} /></Button>
+            </motion.div>
+          )}
+
+          {/* Step 1: Value Pillar 2 — Know before you pay */}
+          {step === 1 && (
+            <motion.div key="w1" initial={{ opacity: 0, x: 40 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -40 }} transition={{ duration: 0.28 }} className="text-center">
+              <div className="mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-pos-500 to-pos-700 shadow-lift">
                 <ShieldCheck size={30} className="text-white" />
               </div>
-              <h1 className="font-display text-2xl font-bold" style={{ color: 'var(--vault-text)' }}>Welcome to VAULT</h1>
+              <span className="inline-flex items-center gap-1.5 rounded-full border border-pos-200 bg-pos-50 px-3 py-0.5 text-xs font-semibold text-pos-700">
+                02 · Confidence First
+              </span>
+              <h2 className="mt-3 font-display text-2xl font-bold" style={{ color: 'var(--vault-text)' }}>
+                Know what happens before you pay.
+              </h2>
               <p className="mt-2 text-[15px] leading-relaxed" style={{ color: 'var(--vault-text-secondary)' }}>
-                A banking experience designed around clarity and confidence. Let's set up your account in a few quick steps.
+                See verified recipient identity, transparent ₹0 fees, and your exact balance after before confirming any movement.
               </p>
-              <div className="mt-8 space-y-3">
-                <div className="flex items-center gap-3 rounded-xl border p-3.5 text-left" style={{ borderColor: 'var(--vault-border)', backgroundColor: 'var(--vault-surface)' }}>
-                  <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-brand-50 text-brand-600"><Landmark size={16} /></span>
-                  <span className="text-sm" style={{ color: 'var(--vault-text-secondary)' }}>Link your bank account</span>
+              <div className="mt-6 space-y-2.5 text-left">
+                <div className="flex items-center gap-3 rounded-xl border p-3" style={{ borderColor: 'var(--vault-border)', backgroundColor: 'var(--vault-surface)' }}>
+                  <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-pos-50 text-pos-600 font-bold text-xs">✓</span>
+                  <span className="text-sm font-medium" style={{ color: 'var(--vault-text)' }}>Money Impact Preview on every transfer & split</span>
                 </div>
-                <div className="flex items-center gap-3 rounded-xl border p-3.5 text-left" style={{ borderColor: 'var(--vault-border)', backgroundColor: 'var(--vault-surface)' }}>
-                  <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-brand-50 text-brand-600"><Wallet size={16} /></span>
-                  <span className="text-sm" style={{ color: 'var(--vault-text-secondary)' }}>Set up your UPI ID</span>
-                </div>
-                <div className="flex items-center gap-3 rounded-xl border p-3.5 text-left" style={{ borderColor: 'var(--vault-border)', backgroundColor: 'var(--vault-surface)' }}>
-                  <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-brand-50 text-brand-600"><ShieldCheck size={16} /></span>
-                  <span className="text-sm" style={{ color: 'var(--vault-text-secondary)' }}>You're ready to go</span>
+                <div className="flex items-center gap-3 rounded-xl border p-3" style={{ borderColor: 'var(--vault-border)', backgroundColor: 'var(--vault-surface)' }}>
+                  <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-brand-50 text-brand-600 font-bold text-xs">✓</span>
+                  <span className="text-sm font-medium" style={{ color: 'var(--vault-text)' }}>Friendly mistake prevention before confirmation</span>
                 </div>
               </div>
-              <Button size="lg" fullWidth className="mt-8" onClick={() => setStep(1)}>Get started <ArrowRight size={17} /></Button>
+              <div className="mt-7 flex gap-2">
+                <Button size="lg" variant="secondary" onClick={() => setStep(0)}>Back</Button>
+                <Button size="lg" className="flex-1" onClick={() => setStep(2)}>Continue <ArrowRight size={17} /></Button>
+              </div>
             </motion.div>
           )}
 
-          {/* Step 1: Link bank */}
-          {step === 1 && (
-            <motion.div key="w1" initial={{ opacity: 0, x: 40 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -40 }} transition={{ duration: 0.3 }}>
-              <h2 className="font-display text-xl font-bold text-center" style={{ color: 'var(--vault-text)' }}>Link your bank</h2>
-              <p className="mt-1 text-sm text-center" style={{ color: 'var(--vault-text-secondary)' }}>Choose your primary bank account.</p>
-              <div className="mt-6 space-y-2.5">
-                {BANKS.map((b) => (
-                  <button key={b.id} onClick={() => setSelectedBank(b)} className={`flex w-full items-center gap-3 rounded-xl border p-4 text-left transition-all ${selectedBank.id === b.id ? 'border-brand-400 shadow-lift' : 'hover:border-ink-300'}`} style={{ borderColor: selectedBank.id === b.id ? undefined : 'var(--vault-border)', backgroundColor: 'var(--vault-surface)' }}>
-                    <span className="flex h-10 w-10 items-center justify-center rounded-xl text-white font-bold text-sm" style={{ background: b.color }}>{b.name.charAt(0)}</span>
-                    <span className="flex-1 text-[15px] font-medium" style={{ color: 'var(--vault-text)' }}>{b.name}</span>
-                    {selectedBank.id === b.id && <span className="flex h-5 w-5 items-center justify-center rounded-full bg-brand-600 text-white"><Check size={12} /></span>}
-                  </button>
-                ))}
-              </div>
-              <Button size="lg" fullWidth className="mt-6" onClick={() => setStep(2)}>Continue <ArrowRight size={17} /></Button>
-              <button onClick={() => setStep(0)} className="mt-3 w-full text-center text-sm font-medium" style={{ color: 'var(--vault-text-secondary)' }}>Go back</button>
-            </motion.div>
-          )}
-
-          {/* Step 2: Set UPI */}
+          {/* Step 2: Confirmation & Demo account ready */}
           {step === 2 && (
-            <motion.div key="w2" initial={{ opacity: 0, x: 40 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -40 }} transition={{ duration: 0.3 }} className="text-center">
-              <div className="mx-auto mb-5 flex h-14 w-14 items-center justify-center rounded-full bg-pos-100 text-pos-600">
-                <Check size={28} />
+            <motion.div key="w2" initial={{ opacity: 0, x: 40 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -40 }} transition={{ duration: 0.28 }} className="text-center">
+              <div className="mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-full bg-pos-100 text-pos-600">
+                <Check size={32} />
               </div>
-              <h2 className="font-display text-xl font-bold" style={{ color: 'var(--vault-text)' }}>You're all set!</h2>
+              <span className="inline-flex items-center gap-1.5 rounded-full border border-pos-200 bg-pos-50 px-3 py-0.5 text-xs font-semibold text-pos-700">
+                03 · Ready to Go
+              </span>
+              <h2 className="mt-3 font-display text-2xl font-bold" style={{ color: 'var(--vault-text)' }}>
+                Make decisions with confidence.
+              </h2>
               <p className="mt-2 text-[15px] leading-relaxed" style={{ color: 'var(--vault-text-secondary)' }}>
-                Your VAULT is connected to <span className="font-semibold" style={{ color: 'var(--vault-text)' }}>{selectedBank.name}</span> and your UPI is <span className="font-semibold" style={{ color: 'var(--vault-text)' }}>{USER.upi}</span>.
+                Your VAULT demo account is ready with linked accounts, pre-verified contacts, and smart transaction history.
               </p>
-              <div className="mt-6 rounded-2xl border p-4 text-left" style={{ borderColor: 'var(--vault-border)', backgroundColor: 'var(--vault-surface)' }}>
+              <div className="mt-6 rounded-2xl border p-4 text-left shadow-xs" style={{ borderColor: 'var(--vault-border)', backgroundColor: 'var(--vault-surface)' }}>
                 <div className="flex items-center justify-between py-1.5">
-                  <span className="text-sm" style={{ color: 'var(--vault-text-secondary)' }}>Bank</span>
-                  <span className="text-sm font-semibold" style={{ color: 'var(--vault-text)' }}>{selectedBank.name}</span>
+                  <span className="text-sm" style={{ color: 'var(--vault-text-secondary)' }}>Account Holder</span>
+                  <span className="text-sm font-semibold" style={{ color: 'var(--vault-text)' }}>{USER.name}</span>
                 </div>
                 <div className="flex items-center justify-between py-1.5 border-t" style={{ borderColor: 'var(--vault-border)' }}>
                   <span className="text-sm" style={{ color: 'var(--vault-text-secondary)' }}>UPI ID</span>
                   <span className="tnum text-sm font-semibold" style={{ color: 'var(--vault-text)' }}>{USER.upi}</span>
                 </div>
                 <div className="flex items-center justify-between py-1.5 border-t" style={{ borderColor: 'var(--vault-border)' }}>
-                  <span className="text-sm" style={{ color: 'var(--vault-text-secondary)' }}>Account</span>
-                  <span className="tnum text-sm font-semibold" style={{ color: 'var(--vault-text)' }}>{USER.accountNumber}</span>
+                  <span className="text-sm" style={{ color: 'var(--vault-text-secondary)' }}>Confidence Layer</span>
+                  <span className="text-xs font-bold text-pos-600">ACTIVE · PROTECTED</span>
                 </div>
               </div>
-              <Button size="lg" fullWidth className="mt-6" onClick={onComplete}>Open VAULT <ArrowRight size={17} /></Button>
+              <Button size="lg" fullWidth className="mt-6" onClick={onComplete}>
+                Open VAULT <ArrowRight size={17} />
+              </Button>
             </motion.div>
           )}
         </AnimatePresence>

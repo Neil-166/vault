@@ -5,6 +5,7 @@ import { CategoryIcon } from '../components/ui/CategoryIcon'
 import { ScreenHeader } from '../components/ScreenHeader'
 import { EmptyState } from '../components/ui/EmptyState'
 import { TransactionExplanation } from '../components/TransactionExplanation'
+import { WhyThisAmount } from '../components/ui/WhyThisAmount'
 import { useVault } from '../store/useVault'
 import { inr, inrFull, longDate } from '../utils/format'
 
@@ -33,6 +34,10 @@ export default function TransactionDetailScreen() {
 
   const isCredit = tx.type === 'credit'
   const isPerson = tx.category === 'Transfer' || tx.category === 'Savings'
+  const balanceBefore = isCredit
+    ? Math.round((tx.balanceAfter - tx.amount) * 100) / 100
+    : Math.round((tx.balanceAfter + tx.amount + tx.fee) * 100) / 100
+
   const copyId = () => {
     navigator.clipboard?.writeText(tx.id).catch(() => {})
     setCopied(true)
@@ -42,7 +47,7 @@ export default function TransactionDetailScreen() {
 
   return (
     <div className="-mx-4 -mt-5 min-h-screen bg-white lg:mx-0 lg:mt-0 lg:rounded-3xl lg:border lg:border-ink-100 lg:shadow-card">
-      <ScreenHeader title="Payment details" subtitle="Understand this payment" />
+      <ScreenHeader title="Payment details" subtitle="Understand this payment" onBack={() => go({ name: 'activity' })} />
 
       <div className="mx-auto max-w-lg px-5 pb-12 pt-8 space-y-6">
         {/* Head */}
@@ -85,14 +90,31 @@ export default function TransactionDetailScreen() {
           <MetaRow label="Date & time" value={longDate(tx.date, tx.time)} />
           <MetaRow label="Payment method" value={tx.method} />
           <MetaRow label="Category" value={tx.category} />
+          <MetaRow label="Balance before payment" value={inrFull(balanceBefore)} />
           <MetaRow
             label="Fee"
             value={tx.fee === 0 ? '₹0 · No hidden fees' : `₹${tx.fee}`}
             highlight={tx.fee === 0}
           />
-          <MetaRow label="Available to spend after" value={inrFull(tx.balanceAfter)} />
+          <MetaRow label="Balance after payment" value={inrFull(tx.balanceAfter)} />
           {tx.note && <MetaRow label="Note" value={tx.note} />}
         </Card>
+
+        {/* Why this amount calculation breakdown */}
+        <WhyThisAmount
+          title="Why this amount?"
+          items={[
+            { label: `${isCredit ? 'Received from' : 'Paid to'} ${tx.merchant}`, amount: tx.amount },
+            { label: 'Platform & transfer fee', amount: tx.fee, note: tx.fee === 0 ? 'Zero hidden fees' : 'Processing fee' },
+          ]}
+          total={tx.amount + tx.fee}
+          totalLabel={isCredit ? 'Total credited to account' : 'Total deducted from account'}
+          formulaExplanation={
+            isCredit
+              ? `Balance increased from ${inrFull(balanceBefore)} to ${inrFull(tx.balanceAfter)}.`
+              : `Balance updated from ${inrFull(balanceBefore)} to ${inrFull(tx.balanceAfter)}.`
+          }
+        />
 
         {/* Narrative Explanation */}
         <TransactionExplanation tx={tx} />

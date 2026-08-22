@@ -23,6 +23,8 @@ import { ScreenHeader } from '../components/ScreenHeader'
 import { SuccessState } from '../components/SuccessState'
 import { ConfidenceStatus } from '../components/ui/ConfidenceStatus'
 import { ReviewSummary } from '../components/ui/ReviewSummary'
+import { MoneyImpactPreview } from '../components/ui/MoneyImpactPreview'
+import { WhyThisAmount } from '../components/ui/WhyThisAmount'
 import { MicroContext } from '../components/ui/MicroContext'
 import { CONTACTS, useVault } from '../store/useVault'
 import { inr, inrFull } from '../utils/format'
@@ -58,8 +60,6 @@ export default function SendScreen() {
   const total = amount + fee
   const balanceAfter = balance - total
   const isLarge = amount >= 5000
-  const amountError =
-    amount <= 0 ? 'Enter an amount above ₹0 to continue.' : amount > balance ? `You have ${inr(balance)} available to spend.` : ''
 
   const hasPreviousPayment = recipient
     ? transactions.some(
@@ -277,7 +277,7 @@ export default function SendScreen() {
               </p>
 
               {/* Contextual Smart Safety Checks */}
-              {amount > 0 && isLarge && (
+              {amount > 0 && isLarge && amount <= balance && (
                 <div className="mt-5">
                   <ConfidenceStatus
                     status="large-amount"
@@ -287,7 +287,7 @@ export default function SendScreen() {
                 </div>
               )}
 
-              {isNewRecipient && amount > 0 && !isLarge && (
+              {isNewRecipient && amount > 0 && !isLarge && amount <= balance && (
                 <div className="mt-5">
                   <ConfidenceStatus
                     status="new-recipient"
@@ -321,9 +321,55 @@ export default function SendScreen() {
                 label="Note"
               />
 
-              {amountError && (
+              {/* Explicit Mistake Prevention for Insufficient Balance */}
+              {amount > balance && (
+                <div className="mt-5 rounded-2xl border border-danger-200 bg-danger-50/80 p-4 text-left shadow-card">
+                  <div className="flex items-center gap-2">
+                    <span className="flex h-7 w-7 items-center justify-center rounded-full bg-danger-500 text-white font-bold text-sm">!</span>
+                    <h3 className="font-display text-sm font-bold text-danger-900">
+                      This payment is larger than your available balance
+                    </h3>
+                  </div>
+                  
+                  <div className="mt-3 space-y-1.5 rounded-xl bg-white/80 p-3 text-xs border border-danger-100">
+                    <div className="flex justify-between text-ink-600">
+                      <span>You have available:</span>
+                      <strong className="tnum text-ink-900 font-semibold">{inrFull(balance)}</strong>
+                    </div>
+                    <div className="flex justify-between text-ink-600">
+                      <span>You're trying to send:</span>
+                      <strong className="tnum text-danger-700 font-semibold">{inr(amount)}</strong>
+                    </div>
+                    <div className="flex justify-between border-t border-danger-100 pt-1.5 text-danger-800 font-bold">
+                      <span>You would be short by:</span>
+                      <span className="tnum">{inr(Math.round((amount - balance) * 100) / 100)}</span>
+                    </div>
+                  </div>
+
+                  <div className="mt-3 flex gap-2">
+                    <Button
+                      size="sm"
+                      variant="secondary"
+                      onClick={() => setAmountStr(String(Math.floor(balance)))}
+                      className="text-xs"
+                    >
+                      Use max ({inr(Math.floor(balance))})
+                    </Button>
+                    <Button
+                      size="sm"
+                      variant="soft"
+                      onClick={() => go({ name: 'addMoney' })}
+                      className="text-xs"
+                    >
+                      Add money first
+                    </Button>
+                  </div>
+                </div>
+              )}
+
+              {amount <= 0 && amountStr !== '' && (
                 <p className="mt-3 rounded-xl bg-danger-50 px-3.5 py-2.5 text-sm font-medium text-danger-600">
-                  {amountError}
+                  Enter an amount above ₹0 to continue.
                 </p>
               )}
 
@@ -332,7 +378,7 @@ export default function SendScreen() {
                 fullWidth
                 className="mt-6"
                 onClick={handleAmountContinue}
-                disabled={!!amountError || amount <= 0}
+                disabled={amount <= 0 || amount > balance}
               >
                 Review before sending <ArrowRight size={17} />
               </Button>
@@ -356,6 +402,16 @@ export default function SendScreen() {
                 </p>
               </div>
 
+              {/* Signature Money Impact Preview */}
+              <MoneyImpactPreview
+                currentBalance={balance}
+                amount={amount}
+                fee={0}
+                type="debit"
+                recipientName={recipient.name}
+                explanation={`You will still have ${inrFull(balanceAfter)} available to spend after sending ${inr(amount)} to ${recipient.name}.`}
+              />
+
               {/* Comprehensive Review Card */}
               <ReviewSummary
                 title="You're about to send"
@@ -370,10 +426,22 @@ export default function SendScreen() {
                 isNew={isNewRecipient}
               />
 
-              {/* Dual Action CTAs: One clear primary CTA */}
+              {/* Why This Amount calculation breakdown */}
+              <WhyThisAmount
+                title="Why this amount & fee?"
+                items={[
+                  { label: `Transfer to ${recipient.name}`, amount },
+                  { label: 'Platform & UPI fee', amount: 0, note: 'Zero fee on all standard transfers' },
+                ]}
+                total={amount}
+                totalLabel="Total deducted from account"
+                formulaExplanation={`Zero fees charged. Exactly ${inr(amount)} will move directly from your available balance of ${inrFull(balance)} to ${recipient.name}.`}
+              />
+
+              {/* Dual Action CTAs */}
               <div className="pt-2 space-y-2.5">
                 <Button size="lg" fullWidth onClick={() => setStep(3)}>
-                  <Check size={18} /> Confirm transfer
+                  <Check size={18} /> Continue to safety checks ({inr(amount)})
                 </Button>
                 <Button
                   size="lg"
@@ -381,7 +449,7 @@ export default function SendScreen() {
                   variant="secondary"
                   onClick={() => setStep(1)}
                 >
-                  <Edit3 size={16} /> Edit details
+                  <Edit3 size={16} /> Edit amount or details
                 </Button>
               </div>
             </motion.div>
@@ -598,16 +666,17 @@ export default function SendScreen() {
               transition={{ duration: 0.2 }}
             >
               <SuccessState
-                title="Payment sent"
+                title="Money sent"
                 amount={sentTx.amount}
-                subtitle={`to ${recipient.name}`}
+                subtitle={`to ${recipient.name} (${recipient.upi})`}
                 meta={[
-                  { label: 'Recipient', value: recipient.name },
+                  { label: 'Recipient', value: `${recipient.name} · ${recipient.upi}` },
+                  { label: 'Balance now', value: inrFull(sentTx.balanceAfter) },
                   { label: 'Fee', value: '₹0 · No hidden fees' },
                   { label: 'Arrival', value: 'Instant' },
-                  { label: 'Transaction ID', value: sentTx.id },
+                  { label: 'Reference ID', value: sentTx.id },
                   { label: 'Date & time', value: `${sentTx.date} · ${sentTx.time}` },
-                  { label: 'Payment status', value: 'Completed' },
+                  { label: 'Status', value: 'Completed · Verified' },
                 ]}
               >
                 <Button

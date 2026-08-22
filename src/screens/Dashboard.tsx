@@ -294,11 +294,27 @@ export default function Dashboard() {
                 }`}
                 style={{ height: `${Math.max((d.amount / maxDay) * 100, 4)}%` }}
               />
-              <span className={`text-[11px] font-medium ${d.isToday ? 'text-brand-700' : 'text-ink-400'}`}>
+              <span className={`text-[11px] font-medium ${d.isToday ? 'text-brand-700 font-bold' : 'text-ink-400'}`}>
                 {d.label}
               </span>
             </div>
           ))}
+        </div>
+
+        {/* One thing worth knowing card */}
+        <div className="mt-4 flex items-center justify-between rounded-xl bg-cream-50 p-3 border border-ink-100 text-xs text-ink-600">
+          <span>
+            <strong className="text-ink-900 font-semibold">One thing worth knowing:</strong>{' '}
+            {weekTotal <= prevWeek
+              ? `You're on track to spend ${inr(Math.abs(weekTotal - prevWeek))} less than last week.`
+              : `Your largest single payment was ${inr(Math.max(...transactions.slice(0, 5).filter(t => t.type === 'debit').map(t => t.amount)))}.`}
+          </span>
+          <button
+            onClick={() => go({ name: 'insights' })}
+            className="text-brand-600 font-semibold hover:underline shrink-0 ml-2"
+          >
+            Details
+          </button>
         </div>
       </section>
 

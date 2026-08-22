@@ -4,6 +4,7 @@ import { PiggyBank, Plus, TrendingUp, ShieldCheck } from 'lucide-react'
 import { Button, Card, Input, ProgressBar } from '../components/ui/primitives'
 import { Modal } from '../components/ui/Modal'
 import { EmptyState } from '../components/ui/EmptyState'
+import { WhyThisAmount } from '../components/ui/WhyThisAmount'
 import { useVault } from '../store/useVault'
 import { inr, monthsUntil, monthYear } from '../utils/format'
 
@@ -195,12 +196,18 @@ export default function GoalsScreen() {
           </div>
 
           {monthly({ saved: parseFloat(saved) || 0, target: parseFloat(target) || 0, targetDate: targetDate + '-01' }) > 0 && targetDate && (
-            <div className="rounded-xl bg-pos-50 p-3.5 text-xs leading-relaxed text-pos-800 border border-pos-200">
-              <p className="font-semibold">Calculated monthly pace:</p>
-              <p className="mt-0.5">
-                Save approximately <span className="tnum font-bold">{inr(Math.round(monthly({ saved: parseFloat(saved) || 0, target: parseFloat(target) || 0, targetDate: targetDate + '-01' }) / 10) * 10)}</span>/month to comfortably reach your goal.
-              </p>
-            </div>
+            <WhyThisAmount
+              title="Calculated monthly pace"
+              items={[
+                { label: 'Target amount', amount: parseFloat(target) || 0 },
+                { label: 'Already saved', amount: parseFloat(saved) || 0, isDeduction: true },
+                { label: 'Remaining', amount: Math.max(0, (parseFloat(target) || 0) - (parseFloat(saved) || 0)), isSubtotal: true },
+                { label: `Months until target`, amount: monthsUntil(targetDate + '-01'), note: 'Duration' },
+              ]}
+              total={Math.round(monthly({ saved: parseFloat(saved) || 0, target: parseFloat(target) || 0, targetDate: targetDate + '-01' }) / 10) * 10}
+              totalLabel="Suggested monthly pace"
+              formulaExplanation={`Save ~${inr(Math.round(monthly({ saved: parseFloat(saved) || 0, target: parseFloat(target) || 0, targetDate: targetDate + '-01' }) / 10) * 10)}/month to reach ${inr(parseFloat(target) || 0)} without financial stress.`}
+            />
           )}
         </div>
       </Modal>

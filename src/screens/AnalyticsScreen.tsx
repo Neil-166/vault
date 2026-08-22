@@ -76,12 +76,29 @@ export default function AnalyticsScreen() {
           <p className="tnum mt-1 font-display text-[32px] font-bold leading-none">{inr(thisMonthSpend)}</p>
           <div className="mt-3 flex items-center gap-2 text-[13px] font-medium">
             {delta <= 0 ? (
-              <span className="flex items-center gap-1.5 text-pos-300"><TrendingDown size={15} /> {deltaPct}% less than {lastMonthName()}</span>
+              <span className="flex items-center gap-1.5 text-pos-300"><TrendingDown size={15} /> {Math.abs(deltaPct)}% less than {lastMonthName()}</span>
             ) : (
               <span className="flex items-center gap-1.5 text-warn-300"><TrendingUp size={15} /> {deltaPct}% more than {lastMonthName()}</span>
             )}
           </div>
         </div>
+
+        {/* One thing worth knowing card */}
+        <Card className="p-4 bg-cream-50 border border-brand-100 shadow-xs">
+          <div className="flex items-start gap-3">
+            <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-brand-50 text-brand-600 font-bold text-xs">
+              💡
+            </span>
+            <div className="text-xs">
+              <p className="font-semibold text-ink-900">One thing worth knowing</p>
+              <p className="mt-1 leading-relaxed text-ink-600">
+                {categoryData.length > 0
+                  ? `${categoryData[0].name} was your largest spending category this month (${inr(categoryData[0].value)}). All other categories remained within planned thresholds.`
+                  : 'Track your spending automatically as payments settle.'}
+              </p>
+            </div>
+          </div>
+        </Card>
 
         {/* Weekly bar chart */}
         <Card className="p-5">

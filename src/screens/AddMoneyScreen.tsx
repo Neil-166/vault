@@ -4,7 +4,7 @@ import { ArrowDownToLine, Landmark, ShieldCheck } from 'lucide-react'
 import { Button } from '../components/ui/primitives'
 import { ScreenHeader } from '../components/ScreenHeader'
 import { SuccessState } from '../components/SuccessState'
-import { FeeBreakdown } from '../components/ui/FeeBreakdown'
+import { MoneyImpactPreview } from '../components/ui/MoneyImpactPreview'
 import { useVault } from '../store/useVault'
 import { inr, inrFull } from '../utils/format'
 
@@ -105,11 +105,15 @@ export default function AddMoneyScreen() {
 
               {amount > 0 && (
                 <div className="mt-5 space-y-3">
-                  <FeeBreakdown amount={amount} fee={0} feeLabel="Deposit fee" totalLabel="Total added to VAULT" />
-                  <div className="flex items-center justify-between rounded-xl bg-cream-50 px-4 py-3 border border-ink-100 text-xs">
-                    <span className="text-ink-500">Available to spend after:</span>
-                    <span className="tnum font-display text-sm font-bold text-ink-950">{inrFull(balance + amount)}</span>
-                  </div>
+                  <MoneyImpactPreview
+                    currentBalance={balance}
+                    amount={amount}
+                    fee={0}
+                    type="credit"
+                    label="Adding from bank"
+                    feeLabel="Deposit fee"
+                    explanation={`Funds land in your VAULT available balance immediately. Your new available balance will be ${inrFull(balance + amount)}.`}
+                  />
                 </div>
               )}
 

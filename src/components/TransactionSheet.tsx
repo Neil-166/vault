@@ -2,6 +2,7 @@ import { Copy } from 'lucide-react'
 import { Avatar, Badge } from './ui/primitives'
 import { CategoryIcon } from './ui/CategoryIcon'
 import { TransactionExplanation } from './TransactionExplanation'
+import { WhyThisAmount } from './ui/WhyThisAmount'
 import { useVault } from '../store/useVault'
 import { inr, inrFull, longDate } from '../utils/format'
 import type { Transaction } from '../types'
@@ -54,17 +55,36 @@ export function TransactionSheet({ tx }: { tx: Transaction }) {
         <MetaRow label="Date & time" value={longDate(tx.date, tx.time)} />
         <MetaRow label="Payment method" value={tx.method} />
         <MetaRow label="Category" value={tx.category} />
+        <MetaRow
+          label="Balance before"
+          value={inrFull(
+            isCredit
+              ? Math.round((tx.balanceAfter - tx.amount) * 100) / 100
+              : Math.round((tx.balanceAfter + tx.amount + tx.fee) * 100) / 100,
+          )}
+        />
         <MetaRow label="Fee" value={tx.fee === 0 ? '₹0 · No hidden fees' : `₹${tx.fee}`} accent={tx.fee === 0} />
-        <MetaRow label="Available to spend after" value={inrFull(tx.balanceAfter)} />
+        <MetaRow label="Balance after" value={inrFull(tx.balanceAfter)} />
         {tx.note && <MetaRow label="Note" value={tx.note} />}
         <div className="flex items-center justify-between px-4 py-3">
           <span className="text-[13px] text-ink-500">Transaction ID</span>
           <button onClick={copyId} className="flex items-center gap-1.5 rounded-lg px-2 py-1 text-[13px] font-medium text-brand-600 hover:bg-brand-50 transition-colors">
-            <span className="tnum font-mono text-[12px] text-ink-600">{tx.id.slice(0, 16)}…</span>
+            <span className="tnum font-mono text-[12px] text-ink-600">{tx.id}</span>
             <Copy size={13} />
           </button>
         </div>
       </div>
+
+      {/* Why this amount calculation breakdown */}
+      <WhyThisAmount
+        title="Why this amount?"
+        items={[
+          { label: `${isCredit ? 'Credit from' : 'Payment to'} ${tx.merchant}`, amount: tx.amount },
+          { label: 'Transfer fee', amount: tx.fee, note: tx.fee === 0 ? 'Zero fee' : 'Processing fee' },
+        ]}
+        total={tx.amount + tx.fee}
+        totalLabel={isCredit ? 'Total credited' : 'Total debited'}
+      />
 
       {/* Transaction explanation component */}
       <TransactionExplanation tx={tx} />

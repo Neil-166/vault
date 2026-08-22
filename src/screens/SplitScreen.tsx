@@ -7,6 +7,7 @@ import { ScreenHeader } from '../components/ScreenHeader'
 import { StepProgress } from '../components/StepProgress'
 import { SuccessState } from '../components/SuccessState'
 import { FeeBreakdown } from '../components/ui/FeeBreakdown'
+import { WhyThisAmount } from '../components/ui/WhyThisAmount'
 import { CONTACTS, useVault, USER } from '../store/useVault'
 import { inr } from '../utils/format'
 
@@ -260,12 +261,45 @@ export default function SplitScreen() {
               )}
 
               {mode === 'custom' && (
-                <div className={`mt-4 flex items-center justify-between rounded-xl px-3.5 py-3 text-sm font-medium ${customOk ? 'bg-pos-50 text-pos-700' : 'bg-warn-50 text-warn-700'}`}>
-                  <span>Total assigned</span>
-                  <span className="tnum font-semibold">
-                    {inr(customSum)} of {inr(total)}
-                    {!customOk && customDiff !== 0 && ` · ${customDiff > 0 ? '+' : ''}${inr(Math.round(customDiff * 100) / 100)} remaining`}
-                  </span>
+                <div className={`mt-4 rounded-xl p-3.5 text-xs ${customOk ? 'bg-pos-50 border border-pos-200 text-pos-800' : 'bg-warn-50 border border-warn-200 text-warn-900'}`}>
+                  <div className="flex items-center justify-between font-semibold">
+                    <span>{customOk ? 'Split balanced ✓' : customDiff > 0 ? `Split is ${inr(customDiff)} short` : `Split is ${inr(Math.abs(customDiff))} over`}</span>
+                    <span className="tnum">
+                      {inr(customSum)} of {inr(total)}
+                    </span>
+                  </div>
+                  {!customOk && (
+                    <div className="mt-2 flex items-center justify-between pt-2 border-t border-warn-200/60">
+                      <span className="text-ink-600">Bill: {inr(total)} · Split: {inr(customSum)}</span>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          const perPerson = Math.round((customDiff / people.length) * 100) / 100
+                          setCustom((prev) => {
+                            const next = { ...prev }
+                            people.forEach((p) => {
+                              const cur = parseFloat(next[p.id]) || 0
+                              next[p.id] = String(Math.max(0, Math.round((cur + perPerson) * 100) / 100))
+                            })
+                            return next
+                          })
+                        }}
+                        className="rounded-lg bg-warn-200 px-2.5 py-1 text-[11px] font-bold text-warn-900 hover:bg-warn-300 transition-colors"
+                      >
+                        Auto-balance
+                      </button>
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {/* Equal mode summary helper */}
+              {mode === 'equal' && people.length > 1 && total > 0 && (
+                <div className="mt-4 rounded-xl bg-brand-50 border border-brand-200 p-3.5 text-xs text-brand-900 space-y-1">
+                  <p className="font-semibold">Because you paid {inr(total)} upfront:</p>
+                  <p className="text-ink-600">
+                    You'll request <strong className="text-brand-700">{inr(equalAmts[1] ?? 0)}</strong> each from {others.length} friend{others.length === 1 ? '' : 's'}. Total coming back to you: <strong className="text-pos-700">{inr(total - (equalAmts[0] ?? 0))}</strong>.
+                  </p>
                 </div>
               )}
 
@@ -300,7 +334,7 @@ export default function SplitScreen() {
                       <div className="text-right">
                         <span className="tnum block text-sm font-bold text-ink-950">{inr(amt)}</span>
                         <span className={`text-xs font-semibold ${p.isYou ? 'text-pos-600' : 'text-warn-600'}`}>
-                          {p.isYou ? 'Paid' : 'Pending'}
+                          {p.isYou ? 'Paid by you' : 'Will request'}
                         </span>
                       </div>
                     </div>
@@ -308,13 +342,26 @@ export default function SplitScreen() {
                 })}
               </div>
 
+              {/* Why this amount calculation */}
+              <WhyThisAmount
+                title="Why these shares?"
+                items={people.map((p, i) => ({
+                  label: `${p.name}${p.isYou ? ' (You)' : ''}`,
+                  amount: amountFor(p, i),
+                  note: p.isYou ? 'Paid upfront' : mode === 'equal' ? '1 of ' + people.length + ' equal shares' : 'Calculated share',
+                }))}
+                total={total}
+                totalLabel="Total bill amount"
+                formulaExplanation={`The total bill of ${inr(total)} is divided across ${people.length} participants with ₹0 platform fee. You will receive ${inr(total - amountFor(people[0], 0))} back as friends pay.`}
+              />
+
               <div className="flex items-center gap-2 rounded-xl bg-pos-50 px-3.5 py-3 text-xs font-medium text-pos-800 border border-pos-200">
                 <ShieldCheck size={16} className="text-pos-600 shrink-0" />
                 <span>Zero fees charged for bill splitting. Requests will be sent clearly to {others.length} friend{others.length === 1 ? '' : 's'}.</span>
               </div>
 
               <div className="pt-2 space-y-2.5">
-                <Button size="lg" fullWidth onClick={handleSend}><Check size={18} /> Create split & send requests</Button>
+                <Button size="lg" fullWidth onClick={handleSend}><Check size={18} /> Create split & send requests ({inr(total)})</Button>
                 <Button size="lg" fullWidth variant="ghost" onClick={() => setStep(1)}>Edit participants</Button>
               </div>
             </motion.div>

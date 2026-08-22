@@ -7,7 +7,8 @@ import { ConfirmationDialog } from '../components/ui/ConfirmationDialog'
 import { ScreenHeader } from '../components/ScreenHeader'
 import { EmptyState } from '../components/ui/EmptyState'
 import { TransactionItem } from '../components/TransactionItem'
-import { FeeBreakdown } from '../components/ui/FeeBreakdown'
+import { MoneyImpactPreview } from '../components/ui/MoneyImpactPreview'
+import { WhyThisAmount } from '../components/ui/WhyThisAmount'
 import { useVault } from '../store/useVault'
 import { inr, inrFull, monthsBetween, monthsUntil, monthYear } from '../utils/format'
 
@@ -148,6 +149,20 @@ export default function GoalDetailScreen() {
           </p>
         </div>
 
+        {/* Why this suggested pace calculation breakdown */}
+        <WhyThisAmount
+          title="Why this suggested monthly pace?"
+          items={[
+            { label: 'Target amount', amount: goal.target },
+            { label: 'Already saved', amount: goal.saved, isDeduction: true },
+            { label: 'Remaining to save', amount: Math.max(0, remaining), isSubtotal: true },
+            { label: `Months until ${monthYear(goal.targetDate)}`, amount: monthsUntil(goal.targetDate), note: 'Target deadline' },
+          ]}
+          total={Math.round(requiredMonthly / 10) * 10}
+          totalLabel="Suggested monthly pace"
+          formulaExplanation={`Calculation: ${inr(Math.max(0, remaining))} remaining ÷ ${monthsUntil(goal.targetDate)} months = ~${inr(Math.round(requiredMonthly / 10) * 10)}/month. This is a non-binding suggestion to help you plan.`}
+        />
+
         {/* Primary and secondary actions */}
         <div className="grid grid-cols-2 gap-2.5 pt-1">
           <Button size="lg" onClick={() => setAddOpen(true)}>
@@ -196,7 +211,7 @@ export default function GoalDetailScreen() {
           </Button>
         }
       >
-        <div className="flex flex-col items-center py-2">
+        <div className="flex flex-col items-center py-2 space-y-4">
           <div className="flex items-center gap-2">
             <span className="font-display text-3xl font-bold text-ink-400">₹</span>
             <input
@@ -211,7 +226,7 @@ export default function GoalDetailScreen() {
             />
           </div>
 
-          <div className="mt-4 flex gap-2">
+          <div className="flex gap-2">
             {[1000, 2500, 5000].map((q) => (
               <button
                 key={q}
@@ -228,15 +243,18 @@ export default function GoalDetailScreen() {
           </div>
 
           {amount > 0 && (
-            <div className="mt-5 w-full">
-              <FeeBreakdown amount={amount} fee={0} feeLabel="Savings transfer fee" totalLabel="Total moved" />
+            <div className="w-full">
+              <MoneyImpactPreview
+                currentBalance={balance}
+                amount={amount}
+                fee={0}
+                type="debit"
+                label="Allocated to goal"
+                explanation={`Moving ${inr(amount)} into ${goal.name} reserves it for your plan. You will have ${inrFull(balance - amount)} free to spend.`}
+                compact
+              />
             </div>
           )}
-
-          <p className="tnum mt-4 text-[13px] text-ink-500">
-            Available to spend after:{' '}
-            <strong className="font-semibold text-ink-900">{inrFull(balance - amount)}</strong>
-          </p>
         </div>
       </Modal>
 

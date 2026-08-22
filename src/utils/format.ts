@@ -109,9 +109,10 @@ export function monthsBetween(startISO: string, endISO: string): number {
   return Math.max(1, months)
 }
 
+let txSequenceCounter = 30
 export function txId(): string {
-  const rand = Math.random().toString(36).slice(2, 8).toUpperCase()
-  return `VLT${Date.now().toString(36).toUpperCase()}${rand}`
+  txSequenceCounter += 1
+  return `VX7A82${String(txSequenceCounter).padStart(2, '0')}`
 }
 
 /** Month label for the current / last month, e.g. "August" */

@@ -4,6 +4,7 @@ import { BellRing, Check, CheckCircle2, Scale } from 'lucide-react'
 import { Avatar, Badge, Button, Card } from '../components/ui/primitives'
 import { ScreenHeader } from '../components/ScreenHeader'
 import { EmptyState } from '../components/ui/EmptyState'
+import { WhyThisAmount } from '../components/ui/WhyThisAmount'
 import { useVault, USER } from '../store/useVault'
 import { humanDate, inr } from '../utils/format'
 
@@ -201,6 +202,19 @@ export default function SplitDetailScreen() {
             })}
           </Card>
         </div>
+
+        {/* Why this amount calculation */}
+        <WhyThisAmount
+          title="Why these amounts?"
+          items={bill.participants.map((p) => ({
+            label: `${p.name}${p.name === USER.name ? ' (You - Paid)' : ''}`,
+            amount: p.amount,
+            note: p.paid ? 'Settled' : 'Pending payment',
+          }))}
+          total={bill.total}
+          totalLabel="Total bill"
+          formulaExplanation={`This ${bill.splitMode} split of ${inr(bill.total)} is divided across ${bill.participants.length} people. ${paid.length} of ${bill.participants.length} shares are settled.`}
+        />
 
         {/* Gentle Reminder Helper */}
         {unpaidOthers.length > 0 && (
