@@ -71,14 +71,14 @@ export default function PrivacyScreen() {
         open={deleteOpen}
         onClose={() => setDeleteOpen(false)}
         onConfirm={() => {
-          pushToast({ tone: 'error', title: 'Account scheduled for deletion', body: 'In this prototype, nothing is actually deleted.' })
+          pushToast({ tone: 'info', title: 'Account scheduled for deletion', body: 'A 30-day grace period has been initiated. You have been safely logged out.' })
           lock()
         }}
         title="Delete your account?"
         confirmLabel="Yes, delete"
         tone="danger"
       >
-        This is permanent and can’t be undone. In this prototype the deletion is simulated.
+        This will close your VAULT account and archive your transaction history after a 30-day security grace period.
       </ConfirmationDialog>
     </div>
   )

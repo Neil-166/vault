@@ -138,7 +138,7 @@ export default function ProfileScreen() {
             </div>
           ))}
         </div>
-        <Button fullWidth variant="secondary" className="mt-4" onClick={() => pushToast({ tone: 'info', title: 'Add payment method', body: 'In this prototype, methods are pre-linked for the demo.' })}>
+        <Button fullWidth variant="secondary" className="mt-4" onClick={() => pushToast({ tone: 'info', title: 'Payment methods', body: '3 active payment methods linked and ready for transfers.' })}>
           Add payment method
         </Button>
       </Modal>

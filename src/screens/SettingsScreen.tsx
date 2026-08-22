@@ -26,7 +26,7 @@ export default function SettingsScreen() {
               pushToast({
                 tone: 'info',
                 title: 'Currency',
-                body: 'INR is the default currency in this prototype.',
+                body: 'Indian Rupee (INR · ₹) is set as your default transaction currency.',
               })
             }
           />

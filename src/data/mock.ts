@@ -27,6 +27,20 @@ export const USER = {
 
 export const STARTING_BALANCE = 48520.4
 
+/* ── Dynamic Date Helpers for Consistent Fresh Demos ────── */
+export function daysAgo(days: number): string {
+  const d = new Date()
+  d.setDate(d.getDate() - days)
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`
+}
+
+export function futureMonth(months: number): string {
+  const d = new Date()
+  d.setMonth(d.getMonth() + months)
+  const lastDay = new Date(d.getFullYear(), d.getMonth() + 1, 0).getDate()
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(lastDay).padStart(2, '0')}`
+}
+
 /* ── Contacts ──────────────────────────────────────────── */
 export const CONTACTS: Contact[] = [
   { id: 'c1', name: 'Rahul Sharma', initials: 'RS', hue: 222, upi: 'rahul.s@vault', verified: true, recent: true },
@@ -45,26 +59,26 @@ export const CONTACTS: Contact[] = [
 type RawTransaction = Omit<Transaction, 'balanceAfter'>
 
 const RAW_TRANSACTIONS: RawTransaction[] = [
-  { id: 'VX7A8201', type: 'debit', category: 'Food', merchant: 'Swiggy', detail: 'Dinner · Butter Chicken & Naan', amount: 420, date: '2026-08-11', time: '7:32 PM', method: 'Card', status: 'Completed', fee: 0 },
-  { id: 'VX7A8202', type: 'credit', category: 'Transfer', merchant: 'Rahul Sharma', detail: 'Transfer received', amount: 1500, date: '2026-08-11', time: '1:05 PM', method: 'UPI', status: 'Completed', fee: 0 },
-  { id: 'VX7A8203', type: 'debit', category: 'Entertainment', merchant: 'Netflix', detail: 'Monthly subscription', amount: 649, date: '2026-08-10', time: '9:15 PM', method: 'Autopay', status: 'Completed', fee: 0 },
-  { id: 'VX7A8204', type: 'debit', category: 'Food', merchant: 'Zomato', detail: 'Lunch · Biryani', amount: 384, date: '2026-08-10', time: '8:41 PM', method: 'Card', status: 'Completed', fee: 0 },
-  { id: 'VX7A8205', type: 'debit', category: 'Groceries', merchant: 'Blinkit', detail: 'Weekly groceries', amount: 612, date: '2026-08-09', time: '11:20 AM', method: 'UPI', status: 'Completed', fee: 0 },
-  { id: 'VX7A8206', type: 'debit', category: 'Transport', merchant: 'Uber', detail: 'Airport → Indiranagar', amount: 268, date: '2026-08-09', time: '9:04 AM', method: 'Card', status: 'Completed', fee: 0 },
-  { id: 'VX7A8207', type: 'debit', category: 'Shopping', merchant: 'Amazon', detail: 'Wireless headphones', amount: 1299, date: '2026-08-08', time: '4:47 PM', method: 'Card', status: 'Completed', fee: 0 },
-  { id: 'VX7A8208', type: 'debit', category: 'Entertainment', merchant: 'Spotify', detail: 'Monthly subscription', amount: 119, date: '2026-08-08', time: '7:12 AM', method: 'Autopay', status: 'Completed', fee: 0 },
-  { id: 'VX7A8209', type: 'debit', category: 'Transfer', merchant: 'Arjun Kapoor', detail: 'Sent · Movie tickets', amount: 2000, date: '2026-08-07', time: '6:30 PM', method: 'UPI', status: 'Completed', fee: 0 },
-  { id: 'VX7A8210', type: 'debit', category: 'Bills', merchant: 'BESCOM', detail: 'Electricity bill · Aug', amount: 1845, date: '2026-08-06', time: '10:12 AM', method: 'NetBanking', status: 'Completed', fee: 0 },
-  { id: 'VX7A8211', type: 'debit', category: 'Transfer', merchant: 'Karan Verma', detail: 'Split · Groceries share', amount: 1200, date: '2026-08-05', time: '9:48 PM', method: 'UPI', status: 'Completed', fee: 0 },
-  { id: 'VX7A8212', type: 'credit', category: 'Transfer', merchant: 'Ananya Mehta', detail: 'Request paid · Coffee run', amount: 750, date: '2026-08-05', time: '3:20 PM', method: 'UPI', status: 'Completed', fee: 0 },
-  { id: 'VX7A8213', type: 'debit', category: 'Groceries', merchant: 'BigBasket', detail: 'Monthly pantry restock', amount: 1540, date: '2026-08-03', time: '6:15 PM', method: 'Card', status: 'Completed', fee: 0 },
-  { id: 'VX7A8214', type: 'credit', category: 'Bills', merchant: 'Acme Corp', detail: 'Salary · August', amount: 45000, date: '2026-08-01', time: '9:00 AM', method: 'NetBanking', status: 'Completed', fee: 0 },
-  { id: 'VX7A8215', type: 'debit', category: 'Bills', merchant: 'Airtel', detail: 'Broadband + mobile', amount: 899, date: '2026-07-31', time: '8:30 AM', method: 'Autopay', status: 'Completed', fee: 0 },
-  { id: 'VX7A8216', type: 'debit', category: 'Food', merchant: 'Third Wave Coffee', detail: 'Cold brew', amount: 340, date: '2026-07-30', time: '5:40 PM', method: 'Card', status: 'Completed', fee: 0 },
-  { id: 'VX7A8217', type: 'debit', category: 'Bills', merchant: 'Rent · Indiranagar', detail: 'House rent · Aug', amount: 14000, date: '2026-07-29', time: '8:00 AM', method: 'NetBanking', status: 'Completed', fee: 0 },
-  { id: 'VX7A8218', type: 'debit', category: 'Entertainment', merchant: 'PVR Cinemas', detail: 'Movie · 2 tickets', amount: 500, date: '2026-07-28', time: '8:20 PM', method: 'Card', status: 'Completed', fee: 0 },
-  { id: 'VX7A8219', type: 'credit', category: 'Transfer', merchant: 'Rohan Verma', detail: 'Transfer received', amount: 2000, date: '2026-07-25', time: '2:15 PM', method: 'UPI', status: 'Completed', fee: 0 },
-  { id: 'VX7A8220', type: 'debit', category: 'Health', merchant: 'PharmEasy', detail: 'Medicines', amount: 760, date: '2026-07-24', time: '7:05 PM', method: 'UPI', status: 'Completed', fee: 0 },
+  { id: 'VX7A8201', type: 'debit', category: 'Food', merchant: 'Swiggy', detail: 'Dinner · Butter Chicken & Naan', amount: 420, date: daysAgo(0), time: '7:32 PM', method: 'Card', status: 'Completed', fee: 0 },
+  { id: 'VX7A8202', type: 'credit', category: 'Transfer', merchant: 'Rahul Sharma', detail: 'Transfer received', amount: 1500, date: daysAgo(0), time: '1:05 PM', method: 'UPI', status: 'Completed', fee: 0 },
+  { id: 'VX7A8203', type: 'debit', category: 'Entertainment', merchant: 'Netflix', detail: 'Monthly subscription', amount: 649, date: daysAgo(1), time: '9:15 PM', method: 'Autopay', status: 'Completed', fee: 0 },
+  { id: 'VX7A8204', type: 'debit', category: 'Food', merchant: 'Zomato', detail: 'Lunch · Biryani', amount: 384, date: daysAgo(1), time: '8:41 PM', method: 'Card', status: 'Completed', fee: 0 },
+  { id: 'VX7A8205', type: 'debit', category: 'Groceries', merchant: 'Blinkit', detail: 'Weekly groceries', amount: 612, date: daysAgo(2), time: '11:20 AM', method: 'UPI', status: 'Completed', fee: 0 },
+  { id: 'VX7A8206', type: 'debit', category: 'Transport', merchant: 'Uber', detail: 'Airport → Indiranagar', amount: 268, date: daysAgo(2), time: '9:04 AM', method: 'Card', status: 'Completed', fee: 0 },
+  { id: 'VX7A8207', type: 'debit', category: 'Shopping', merchant: 'Amazon', detail: 'Wireless headphones', amount: 1299, date: daysAgo(3), time: '4:47 PM', method: 'Card', status: 'Completed', fee: 0 },
+  { id: 'VX7A8208', type: 'debit', category: 'Entertainment', merchant: 'Spotify', detail: 'Monthly subscription', amount: 119, date: daysAgo(3), time: '7:12 AM', method: 'Autopay', status: 'Completed', fee: 0 },
+  { id: 'VX7A8209', type: 'debit', category: 'Transfer', merchant: 'Arjun Kapoor', detail: 'Sent · Movie tickets', amount: 2000, date: daysAgo(4), time: '6:30 PM', method: 'UPI', status: 'Completed', fee: 0 },
+  { id: 'VX7A8210', type: 'debit', category: 'Bills', merchant: 'BESCOM', detail: 'Electricity bill', amount: 1845, date: daysAgo(5), time: '10:12 AM', method: 'NetBanking', status: 'Completed', fee: 0 },
+  { id: 'VX7A8211', type: 'debit', category: 'Transfer', merchant: 'Karan Verma', detail: 'Split · Groceries share', amount: 1200, date: daysAgo(6), time: '9:48 PM', method: 'UPI', status: 'Completed', fee: 0 },
+  { id: 'VX7A8212', type: 'credit', category: 'Transfer', merchant: 'Ananya Mehta', detail: 'Request paid · Coffee run', amount: 750, date: daysAgo(6), time: '3:20 PM', method: 'UPI', status: 'Completed', fee: 0 },
+  { id: 'VX7A8213', type: 'debit', category: 'Groceries', merchant: 'BigBasket', detail: 'Monthly pantry restock', amount: 1540, date: daysAgo(8), time: '6:15 PM', method: 'Card', status: 'Completed', fee: 0 },
+  { id: 'VX7A8214', type: 'credit', category: 'Bills', merchant: 'Acme Corp', detail: 'Salary deposit', amount: 45000, date: daysAgo(10), time: '9:00 AM', method: 'NetBanking', status: 'Completed', fee: 0 },
+  { id: 'VX7A8215', type: 'debit', category: 'Bills', merchant: 'Airtel', detail: 'Broadband + mobile', amount: 899, date: daysAgo(12), time: '8:30 AM', method: 'Autopay', status: 'Completed', fee: 0 },
+  { id: 'VX7A8216', type: 'debit', category: 'Food', merchant: 'Third Wave Coffee', detail: 'Cold brew', amount: 340, date: daysAgo(14), time: '5:40 PM', method: 'Card', status: 'Completed', fee: 0 },
+  { id: 'VX7A8217', type: 'debit', category: 'Bills', merchant: 'Rent · Indiranagar', detail: 'House rent', amount: 14000, date: daysAgo(16), time: '8:00 AM', method: 'NetBanking', status: 'Completed', fee: 0 },
+  { id: 'VX7A8218', type: 'debit', category: 'Entertainment', merchant: 'PVR Cinemas', detail: 'Movie · 2 tickets', amount: 500, date: daysAgo(18), time: '8:20 PM', method: 'Card', status: 'Completed', fee: 0 },
+  { id: 'VX7A8219', type: 'credit', category: 'Transfer', merchant: 'Rohan Verma', detail: 'Transfer received', amount: 2000, date: daysAgo(20), time: '2:15 PM', method: 'UPI', status: 'Completed', fee: 0 },
+  { id: 'VX7A8220', type: 'debit', category: 'Health', merchant: 'PharmEasy', detail: 'Medicines', amount: 760, date: daysAgo(22), time: '7:05 PM', method: 'UPI', status: 'Completed', fee: 0 },
 ]
 
 /**
@@ -103,9 +117,9 @@ export const TRANSACTIONS: Transaction[] = calculateDeterministicBalances(
 
 /* ── Savings goals ─────────────────────────────────────── */
 export const GOALS: Goal[] = [
-  { id: 'g1', name: 'MacBook Fund', emoji: '💻', target: 80000, saved: 42000, targetDate: '2026-12-31', createdAt: '2026-05-01', hue: 232 },
-  { id: 'g2', name: 'Vacation', emoji: '🌴', target: 30000, saved: 18500, targetDate: '2027-03-31', createdAt: '2026-06-01', hue: 152 },
-  { id: 'g3', name: 'Emergency Fund', emoji: '🛡️', target: 100000, saved: 65000, targetDate: '2026-12-31', createdAt: '2025-08-01', hue: 38 },
+  { id: 'g1', name: 'MacBook Fund', emoji: '💻', target: 80000, saved: 42000, targetDate: futureMonth(4), createdAt: daysAgo(90), hue: 232 },
+  { id: 'g2', name: 'Vacation', emoji: '🌴', target: 30000, saved: 18500, targetDate: futureMonth(7), createdAt: daysAgo(60), hue: 152 },
+  { id: 'g3', name: 'Emergency Fund', emoji: '🛡️', target: 100000, saved: 65000, targetDate: futureMonth(6), createdAt: daysAgo(180), hue: 38 },
 ]
 
 /* ── Bills / splits ────────────────────────────────────── */
@@ -115,7 +129,7 @@ export const BILLS: Bill[] = [
     title: 'Dinner at Social',
     merchant: 'Social · Koramangala',
     total: 4800,
-    date: '2026-08-09',
+    date: daysAgo(2),
     splitMode: 'equal',
     participants: [
       { id: 'p1', name: 'Aarav Malhotra', initials: 'AM', hue: 232, amount: 1200, paid: true },
@@ -131,7 +145,7 @@ export const BILLS: Bill[] = [
     title: 'Monthly Groceries',
     merchant: 'BigBasket',
     total: 2400,
-    date: '2026-08-03',
+    date: daysAgo(8),
     splitMode: 'equal',
     participants: [
       { id: 'p5', name: 'Aarav Malhotra', initials: 'AM', hue: 232, amount: 800, paid: true },
@@ -146,7 +160,7 @@ export const BILLS: Bill[] = [
     title: 'Cab to airport',
     merchant: 'Uber',
     total: 720,
-    date: '2026-08-06',
+    date: daysAgo(5),
     splitMode: 'equal',
     participants: [
       { id: 'p8', name: 'Aarav Malhotra', initials: 'AM', hue: 232, amount: 360, paid: true },
@@ -159,10 +173,10 @@ export const BILLS: Bill[] = [
 
 /* ── Money requests ────────────────────────────────────── */
 export const REQUESTS: MoneyRequest[] = [
-  { id: 'r1', direction: 'incoming', name: 'Ananya Mehta', initials: 'AM', hue: 340, amount: 850, note: 'Bakery supplies for Saturday', status: 'pending', date: '2026-08-11' },
-  { id: 'r2', direction: 'outgoing', name: 'Arjun Kapoor', initials: 'AK', hue: 24, amount: 900, note: 'Concert tickets', status: 'pending', date: '2026-08-10' },
-  { id: 'r3', direction: 'incoming', name: 'Vikram Joshi', initials: 'VJ', hue: 190, amount: 1250, note: 'Dinner split', status: 'declined', date: '2026-08-08' },
-  { id: 'r4', direction: 'outgoing', name: 'Priya Singh', initials: 'PS', hue: 280, amount: 640, note: 'Museum entry', status: 'paid', date: '2026-08-06' },
+  { id: 'r1', direction: 'incoming', name: 'Ananya Mehta', initials: 'AM', hue: 340, amount: 850, note: 'Bakery supplies for Saturday', status: 'pending', date: daysAgo(0) },
+  { id: 'r2', direction: 'outgoing', name: 'Arjun Kapoor', initials: 'AK', hue: 24, amount: 900, note: 'Concert tickets', status: 'pending', date: daysAgo(1) },
+  { id: 'r3', direction: 'incoming', name: 'Vikram Joshi', initials: 'VJ', hue: 190, amount: 1250, note: 'Dinner split', status: 'declined', date: daysAgo(3) },
+  { id: 'r4', direction: 'outgoing', name: 'Priya Singh', initials: 'PS', hue: 280, amount: 640, note: 'Museum entry', status: 'paid', date: daysAgo(5) },
 ]
 
 /* ── Notifications ─────────────────────────────────────── */
